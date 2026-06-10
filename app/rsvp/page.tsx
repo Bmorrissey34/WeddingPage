@@ -5,7 +5,7 @@ import { wedding } from "@/lib/wedding-data"
 
 export const metadata: Metadata = {
   title: "RSVP",
-  description: `Kindly respond to ${wedding.coupleShort}'s wedding by ${wedding.rsvpDeadline}.`,
+  description: `Kindly respond to ${wedding.brideFull} and ${wedding.groomFull}'s wedding by ${wedding.rsvpDeadline}.`,
 }
 
 export default function RsvpPage() {

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { addDoc, collection, serverTimestamp } from "firebase/firestore"
 import { Check, CalendarHeart, PartyPopper, Heart } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -9,35 +10,35 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { db } from "@/lib/firebase"
 import { cn } from "@/lib/utils"
 import { mealOptions, type Meal } from "@/lib/rsvp-data"
 import { wedding } from "@/lib/wedding-data"
 
-type Attendance = "attending" | "declined" | ""
+type AttendanceStatus = "attending" | "declined" | ""
+type PartySize = 1 | 2 | ""
 
 type FormState = {
-  name: string
+  fullName: string
   email: string
-  attendance: Attendance
-  bringingGuest: boolean
-  guestName: string
-  meal: Meal | ""
-  guestMeal: Meal | ""
-  dietary: string
-  song: string
+  attendanceStatus: AttendanceStatus
+  partySize: PartySize
+  plusOneName: string
+  mealChoice: Meal | ""
+  dietaryRestrictions: string
+  songRequest: string
   notes: string
 }
 
 const initialState: FormState = {
-  name: "",
+  fullName: "",
   email: "",
-  attendance: "",
-  bringingGuest: false,
-  guestName: "",
-  meal: "",
-  guestMeal: "",
-  dietary: "",
-  song: "",
+  attendanceStatus: "",
+  partySize: "",
+  plusOneName: "",
+  mealChoice: "",
+  dietaryRestrictions: "",
+  songRequest: "",
   notes: "",
 }
 
@@ -46,6 +47,8 @@ export function RsvpForm() {
   const [form, setForm] = useState<FormState>(initialState)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -56,26 +59,70 @@ export function RsvpForm() {
     })
   }
 
+  function handleAttendanceChange(value: Exclude<AttendanceStatus, "">) {
+    setSubmitError("")
+    setErrors((prev) => {
+      const next = { ...prev }
+      delete next.attendanceStatus
+      delete next.partySize
+      delete next.plusOneName
+      delete next.mealChoice
+      return next
+    })
+
+    setForm((prev) => ({
+      ...prev,
+      attendanceStatus: value,
+      partySize: value === "attending" ? prev.partySize : "",
+      plusOneName: value === "attending" ? prev.plusOneName : "",
+      mealChoice: value === "attending" ? prev.mealChoice : "",
+      dietaryRestrictions: value === "attending" ? prev.dietaryRestrictions : "",
+      songRequest: value === "attending" ? prev.songRequest : "",
+    }))
+  }
+
+  function handlePartySizeChange(value: PartySize) {
+    setSubmitError("")
+    setErrors((prev) => {
+      const next = { ...prev }
+      delete next.partySize
+      delete next.plusOneName
+      return next
+    })
+
+    setForm((prev) => ({
+      ...prev,
+      partySize: value,
+      plusOneName: value === 2 ? prev.plusOneName : "",
+    }))
+  }
+
   function validateStep0() {
     const next: Record<string, string> = {}
-    if (!form.name.trim()) next.name = "Please enter your name."
+    if (!form.fullName.trim()) next.fullName = "Please enter your name."
     if (!form.email.trim()) {
       next.email = "Please enter your email."
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       next.email = "Please enter a valid email address."
     }
-    if (!form.attendance) next.attendance = "Please let us know if you can make it."
+    if (!form.attendanceStatus) next.attendanceStatus = "Please let us know if you can make it."
     setErrors(next)
     return Object.keys(next).length === 0
   }
 
   function validateStep1() {
     const next: Record<string, string> = {}
-    if (!form.meal) next.meal = "Please choose a meal."
-    if (form.bringingGuest) {
-      if (!form.guestName.trim()) next.guestName = "Please enter your guest's name."
-      if (!form.guestMeal) next.guestMeal = "Please choose a meal for your guest."
+    if (form.attendanceStatus !== "attending") {
+      setErrors(next)
+      return true
     }
+
+    if (!form.partySize) next.partySize = "Please choose your party size."
+    if (!form.mealChoice) next.mealChoice = "Please choose a meal."
+    if (form.partySize === 2 && !form.plusOneName.trim()) {
+      next.plusOneName = "Please enter your guest's name."
+    }
+
     setErrors(next)
     return Object.keys(next).length === 0
   }
@@ -84,7 +131,7 @@ export function RsvpForm() {
     if (step === 0) {
       if (!validateStep0()) return
       // If declining, skip the meal step and go straight to the note step.
-      if (form.attendance === "declined") {
+      if (form.attendanceStatus === "declined") {
         setStep(2)
         return
       }
@@ -94,28 +141,64 @@ export function RsvpForm() {
   }
 
   function handleBack() {
-    if (step === 2 && form.attendance === "declined") {
+    if (step === 2 && form.attendanceStatus === "declined") {
       setStep(0)
       return
     }
     setStep((s) => Math.max(s - 1, 0))
   }
 
-  function handleSubmit() {
-    // Mock submission - in a real app this would POST to a backend.
-    console.log("[v0] RSVP submitted:", form)
-    setSubmitted(true)
+  async function handleSubmit() {
+    if (isSubmitting) return
+
+    const detailsValid = validateStep0()
+    const attendanceValid = form.attendanceStatus === "declined" || validateStep1()
+
+    if (!detailsValid || !attendanceValid) {
+      return
+    }
+
+    setIsSubmitting(true)
+    setSubmitError("")
+
+    try {
+      const isAttending = form.attendanceStatus === "attending"
+      const partySize = isAttending ? Number(form.partySize) : 0
+
+      await addDoc(collection(db, "rsvps"), {
+        fullName: form.fullName.trim(),
+        email: form.email.trim(),
+        attendanceStatus: form.attendanceStatus,
+        partySize,
+        plusOneName: partySize > 1 ? form.plusOneName.trim() : "",
+        mealChoice: isAttending ? form.mealChoice : "",
+        dietaryRestrictions: isAttending ? form.dietaryRestrictions.trim() : "",
+        songRequest: isAttending ? form.songRequest.trim() : "",
+        notes: form.notes.trim(),
+        submittedAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      })
+
+      setSubmitted(true)
+    } catch (error) {
+      console.error("Failed to submit RSVP:", error)
+      setSubmitError("Something went wrong while sending your RSVP. Please try again in a moment.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (submitted) {
-    return <RsvpSuccess attending={form.attendance === "attending"} name={form.name} />
+    return <RsvpSuccess attending={form.attendanceStatus === "attending"} name={form.fullName} />
   }
 
   const steps =
-    form.attendance === "declined"
+    form.attendanceStatus === "declined"
       ? ["Your Details", "A Note"]
       : ["Your Details", "Meal & Guest", "A Note"]
-  const displayStep = step === 2 && form.attendance === "declined" ? 1 : step
+  const displayStep = step === 2 && form.attendanceStatus === "declined" ? 1 : step
+  const isAttending = form.attendanceStatus === "attending"
+  const needsPlusOne = isAttending && form.partySize === 2
 
   return (
     <Card>
@@ -152,13 +235,14 @@ export function RsvpForm() {
         {/* Step 0: details */}
         {step === 0 ? (
           <div className="flex flex-col gap-5">
-            <Field label="Full Name" htmlFor="name" error={errors.name}>
+            <Field label="Full Name" htmlFor="fullName" error={errors.fullName}>
               <Input
-                id="name"
-                value={form.name}
-                onChange={(e) => update("name", e.target.value)}
+                id="fullName"
+                value={form.fullName}
+                onChange={(e) => update("fullName", e.target.value)}
                 placeholder="Your full name"
-                aria-invalid={!!errors.name}
+                aria-invalid={!!errors.fullName}
+                disabled={isSubmitting}
               />
             </Field>
             <Field label="Email" htmlFor="email" error={errors.email}>
@@ -169,21 +253,24 @@ export function RsvpForm() {
                 onChange={(e) => update("email", e.target.value)}
                 placeholder="you@example.com"
                 aria-invalid={!!errors.email}
+                disabled={isSubmitting}
               />
             </Field>
-            <Field label="Will you be joining us?" error={errors.attendance}>
+            <Field label="Will you be joining us?" error={errors.attendanceStatus}>
               <div className="grid gap-3 sm:grid-cols-2">
                 <ChoiceCard
-                  selected={form.attendance === "attending"}
-                  onClick={() => update("attendance", "attending")}
+                  selected={form.attendanceStatus === "attending"}
+                  onClick={() => handleAttendanceChange("attending")}
                   icon={PartyPopper}
                   title="Joyfully Accept"
+                  disabled={isSubmitting}
                 />
                 <ChoiceCard
-                  selected={form.attendance === "declined"}
-                  onClick={() => update("attendance", "declined")}
+                  selected={form.attendanceStatus === "declined"}
+                  onClick={() => handleAttendanceChange("declined")}
                   icon={Heart}
                   title="Regretfully Decline"
+                  disabled={isSubmitting}
                 />
               </div>
             </Field>
@@ -193,59 +280,65 @@ export function RsvpForm() {
         {/* Step 1: meal & guest */}
         {step === 1 ? (
           <div className="flex flex-col gap-6">
-            <Field label="Your Meal Selection" error={errors.meal}>
+            <Field label="Party Size" error={errors.partySize}>
+              <RadioGroup
+                value={form.partySize ? String(form.partySize) : ""}
+                onValueChange={(value) => handlePartySizeChange(Number(value) as PartySize)}
+                className="grid gap-3 sm:grid-cols-2"
+              >
+                {[
+                  { value: "1", label: "Just Me", description: "I will be attending solo." },
+                  { value: "2", label: "Plus One", description: "I will be attending with a guest." },
+                ].map((option) => (
+                  <Label
+                    key={option.value}
+                    className={cn(
+                      "flex cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors",
+                      form.partySize === Number(option.value)
+                        ? "border-[var(--navy)] bg-[var(--accent)]"
+                        : "border-border hover:border-[var(--sage)]"
+                    )}
+                  >
+                    <RadioGroupItem value={option.value} disabled={isSubmitting} />
+                    <span className="flex flex-col gap-1">
+                      <span className="text-sm font-medium text-foreground">{option.label}</span>
+                      <span className="text-xs text-muted-foreground">{option.description}</span>
+                    </span>
+                  </Label>
+                ))}
+              </RadioGroup>
+            </Field>
+
+            <Field label="Your Meal Selection" error={errors.mealChoice}>
               <MealPicker
-                value={form.meal}
-                onChange={(m) => update("meal", m)}
+                value={form.mealChoice}
+                onChange={(m) => update("mealChoice", m)}
+                disabled={isSubmitting}
               />
             </Field>
 
-            <div className="flex items-center justify-between rounded-lg border border-border p-4">
-              <div>
-                <p className="font-medium text-foreground">Bringing a guest?</p>
-                <p className="text-sm text-muted-foreground">
-                  Let us know if you&apos;ll have a plus-one.
-                </p>
-              </div>
-              <Button
-                type="button"
-                variant={form.bringingGuest ? "default" : "outline"}
-                onClick={() => update("bringingGuest", !form.bringingGuest)}
-                className={cn(
-                  form.bringingGuest &&
-                    "bg-[var(--navy)] text-[var(--navy-foreground)] hover:bg-[var(--navy)]/90"
-                )}
-              >
-                {form.bringingGuest ? "Yes" : "No"}
-              </Button>
-            </div>
-
-            {form.bringingGuest ? (
+            {needsPlusOne ? (
               <div className="flex flex-col gap-5 rounded-lg border border-dashed border-border p-4">
-                <Field label="Guest's Name" htmlFor="guestName" error={errors.guestName}>
+                <Field label="Guest's Name" htmlFor="plusOneName" error={errors.plusOneName}>
                   <Input
-                    id="guestName"
-                    value={form.guestName}
-                    onChange={(e) => update("guestName", e.target.value)}
+                    id="plusOneName"
+                    value={form.plusOneName}
+                    onChange={(e) => update("plusOneName", e.target.value)}
                     placeholder="Your guest's name"
-                    aria-invalid={!!errors.guestName}
-                  />
-                </Field>
-                <Field label="Guest's Meal Selection" error={errors.guestMeal}>
-                  <MealPicker
-                    value={form.guestMeal}
-                    onChange={(m) => update("guestMeal", m)}
+                    aria-invalid={!!errors.plusOneName}
+                    disabled={isSubmitting}
                   />
                 </Field>
               </div>
             ) : null}
 
-            <Field label="Dietary Restrictions (optional)" htmlFor="dietary">
+            <Field label="Dietary Restrictions (optional)" htmlFor="dietaryRestrictions">
               <Input
-                id="dietary"
-                value={form.dietary}
-                onChange={(e) => update("dietary", e.target.value)}
+                id="dietaryRestrictions"
+                value={form.dietaryRestrictions}
+                onChange={(e) => update("dietaryRestrictions", e.target.value)}
                 placeholder="Allergies, preferences, etc."
+                disabled={isSubmitting}
               />
             </Field>
           </div>
@@ -254,13 +347,14 @@ export function RsvpForm() {
         {/* Step 2: note */}
         {step === 2 ? (
           <div className="flex flex-col gap-5">
-            {form.attendance === "attending" ? (
-              <Field label="Song Request (optional)" htmlFor="song">
+            {form.attendanceStatus === "attending" ? (
+              <Field label="Song Request (optional)" htmlFor="songRequest">
                 <Input
-                  id="song"
-                  value={form.song}
-                  onChange={(e) => update("song", e.target.value)}
+                  id="songRequest"
+                  value={form.songRequest}
+                  onChange={(e) => update("songRequest", e.target.value)}
                   placeholder="A song to get you on the dance floor"
+                  disabled={isSubmitting}
                 />
               </Field>
             ) : null}
@@ -271,15 +365,21 @@ export function RsvpForm() {
                 onChange={(e) => update("notes", e.target.value)}
                 placeholder="Share your well-wishes..."
                 rows={4}
+                disabled={isSubmitting}
               />
             </Field>
+            {submitError ? (
+              <p className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                {submitError}
+              </p>
+            ) : null}
           </div>
         ) : null}
 
         {/* Nav */}
         <div className="mt-8 flex items-center justify-between gap-3">
           {step > 0 ? (
-            <Button type="button" variant="ghost" onClick={handleBack}>
+            <Button type="button" variant="ghost" onClick={handleBack} disabled={isSubmitting}>
               Back
             </Button>
           ) : (
@@ -289,6 +389,7 @@ export function RsvpForm() {
             <Button
               type="button"
               onClick={handleNext}
+              disabled={isSubmitting}
               className="bg-[var(--navy)] text-[var(--navy-foreground)] hover:bg-[var(--navy)]/90"
             >
               Continue
@@ -297,10 +398,11 @@ export function RsvpForm() {
             <Button
               type="button"
               onClick={handleSubmit}
+              disabled={isSubmitting}
               className="bg-[var(--navy)] text-[var(--navy-foreground)] hover:bg-[var(--navy)]/90"
             >
               <CalendarHeart data-icon="inline-start" />
-              Submit RSVP
+              {isSubmitting ? "Submitting..." : "Submit RSVP"}
             </Button>
           )}
         </div>
@@ -340,19 +442,22 @@ function ChoiceCard({
   onClick,
   icon: Icon,
   title,
+  disabled,
 }: {
   selected: boolean
   onClick: () => void
   icon: React.ComponentType<{ className?: string }>
   title: string
+  disabled?: boolean
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       aria-pressed={selected}
       className={cn(
-        "flex items-center gap-3 rounded-lg border p-4 text-left transition-all",
+        "flex items-center gap-3 rounded-lg border p-4 text-left transition-all disabled:cursor-not-allowed disabled:opacity-70",
         selected
           ? "border-[var(--navy)] bg-[var(--accent)]"
           : "border-border hover:border-[var(--sage)]"
@@ -378,9 +483,11 @@ function ChoiceCard({
 function MealPicker({
   value,
   onChange,
+  disabled,
 }: {
   value: Meal | ""
   onChange: (meal: Meal) => void
+  disabled?: boolean
 }) {
   return (
     <RadioGroup
@@ -398,7 +505,7 @@ function MealPicker({
               : "border-border hover:border-[var(--sage)]"
           )}
         >
-          <RadioGroupItem value={meal} />
+          <RadioGroupItem value={meal} disabled={disabled} />
           <span className="text-sm font-medium text-foreground">{meal}</span>
         </Label>
       ))}
