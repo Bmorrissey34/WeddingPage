@@ -164,7 +164,7 @@ export const storyMoments: StoryMoment[] = [
     id: "proposal",
     year: "2024",
     title: "A Hike and a Drone",
-    body: "On April 26, 2024, our story took its next beautiful step at Rainbow Falls in Chattanooga. Brendan planned a proposal on a rock beneath the falls and even filmed the moment with a drone, equal parts thoughtful gesture and private joke that felt perfectly us. It was a joyful, unforgettable day, and of course, the answer was yes.",
+    body: "On April 26, 2024, our story took its next beautiful step at Rainbow Falls in Chattanooga. Brendan planned a proposal on a rock beneath the falls and filmed the moment with a drone, since it was no small task to find a photographer willing to hike two miles downhill through the forest. It was a joyful, unforgettable day, and of course, the answer was yes.",
     image: "/images/engagement-2.png",
   },
   {
