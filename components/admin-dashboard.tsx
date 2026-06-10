@@ -23,7 +23,16 @@ import {
   type Auth,
   type User,
 } from "firebase/auth"
-import { collection, onSnapshot, query, type Timestamp } from "firebase/firestore"
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+  serverTimestamp,
+  updateDoc,
+  type Timestamp,
+} from "firebase/firestore"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -287,6 +296,8 @@ function Dashboard({
   const [plusOneFilter, setPlusOneFilter] = useState<PlusOneFilter>("all")
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [deleteCandidate, setDeleteCandidate] = useState<RsvpRecord | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState("")
 
   useEffect(() => {
     setIsLoadingRsvps(true)
@@ -355,6 +366,24 @@ function Dashboard({
       count: rsvps.filter((record) => record.mealChoice === meal).length,
     }))
   }, [rsvps])
+
+  async function handleDelete(id: string) {
+    setIsDeleting(true)
+    setDeleteError("")
+
+    try {
+      await deleteDoc(doc(db, "rsvps", id))
+      setDeleteCandidate(null)
+      if (selectedId === id) {
+        setSelectedId(null)
+      }
+    } catch (error) {
+      console.error("Failed to delete RSVP:", error)
+      setDeleteError("We couldn't delete this RSVP right now. Please try again in a moment.")
+    } finally {
+      setIsDeleting(false)
+    }
+  }
 
   function handleExport() {
     const headers = [
@@ -578,22 +607,38 @@ function Dashboard({
       <RsvpDetailsDialog
         record={selectedRecord}
         onClose={() => setSelectedId(null)}
+        onSaved={() => setSelectedId(null)}
       />
 
-      <Dialog open={Boolean(deleteCandidate)} onOpenChange={(open) => !open && setDeleteCandidate(null)}>
+      <Dialog open={Boolean(deleteCandidate)} onOpenChange={(open) => !open && !isDeleting && setDeleteCandidate(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete RSVP</DialogTitle>
             <DialogDescription>
-              Delete is not connected in this phase yet. This confirmation stays in place so the admin flow can keep its shape safely.
+              Are you sure you want to remove this RSVP from Firestore? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
+          {deleteCandidate ? (
+            <div className="rounded-2xl border border-[rgba(34,49,63,0.08)] bg-[rgba(255,252,247,0.66)] p-4 text-sm text-muted-foreground">
+              <p className="font-medium text-foreground">{deleteCandidate.name}</p>
+              <p>{deleteCandidate.email}</p>
+            </div>
+          ) : null}
+          {deleteError ? (
+            <p className="rounded-2xl border border-[rgba(128,63,56,0.18)] bg-[rgba(128,63,56,0.08)] px-4 py-3 text-sm text-[var(--burgundy)]">
+              {deleteError}
+            </p>
+          ) : null}
           <div className="mt-4 flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setDeleteCandidate(null)}>
-              Close
+            <Button variant="outline" onClick={() => setDeleteCandidate(null)} disabled={isDeleting}>
+              Cancel
             </Button>
-            <Button variant="destructive" disabled>
-              Delete unavailable
+            <Button
+              variant="destructive"
+              onClick={() => deleteCandidate && handleDelete(deleteCandidate.id)}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
             </Button>
           </div>
         </DialogContent>
@@ -631,14 +676,22 @@ function getLoginErrorMessage(error: unknown) {
 function RsvpDetailsDialog({
   record,
   onClose,
+  onSaved,
 }: {
   record: RsvpRecord | null
   onClose: () => void
+  onSaved: () => void
 }) {
   const [form, setForm] = useState<RsvpRecord | null>(record)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState("")
+  const [saveSuccess, setSaveSuccess] = useState("")
 
   useEffect(() => {
     setForm(record ? { ...record } : null)
+    setIsSaving(false)
+    setSaveError("")
+    setSaveSuccess("")
   }, [record])
 
   if (!record || !form) {
@@ -647,29 +700,120 @@ function RsvpDetailsDialog({
 
   function updateField<K extends keyof RsvpRecord>(key: K, value: RsvpRecord[K]) {
     setForm((current) => (current ? { ...current, [key]: value } : current))
+    setSaveError("")
+    setSaveSuccess("")
+  }
+
+  function normalizeFormForSave(current: RsvpRecord) {
+    const isAttending = current.attendanceStatus === "attending"
+    const normalizedPartySize = isAttending ? Math.min(2, Math.max(1, current.partySize || 1)) : 0
+
+    return {
+      fullName: current.name.trim(),
+      email: current.email.trim(),
+      attendanceStatus: current.attendanceStatus,
+      partySize: normalizedPartySize,
+      plusOneName: isAttending && normalizedPartySize > 1 ? current.plusOneName.trim() : "",
+      mealChoice: isAttending ? current.mealChoice : "",
+      dietaryRestrictions: isAttending ? current.dietaryRestrictions.trim() : "",
+      songRequest: isAttending ? current.songRequest.trim() : "",
+      notes: current.notes.trim(),
+    }
+  }
+
+  async function handleSave() {
+    const currentForm = form
+
+    if (!currentForm) {
+      return
+    }
+
+    const normalized = normalizeFormForSave(currentForm)
+
+    if (!normalized.fullName) {
+      setSaveError("Please enter the guest's name before saving.")
+      return
+    }
+
+    if (!normalized.email) {
+      setSaveError("Please enter an email address before saving.")
+      return
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized.email)) {
+      setSaveError("Please enter a valid email address before saving.")
+      return
+    }
+
+    if (normalized.attendanceStatus === "attending" && !normalized.mealChoice) {
+      setSaveError("Please choose a meal option for attending guests.")
+      return
+    }
+
+    if (normalized.attendanceStatus === "attending" && normalized.partySize > 1 && !normalized.plusOneName) {
+      setSaveError("Please add the plus-one name for a party of two.")
+      return
+    }
+
+    setIsSaving(true)
+    setSaveError("")
+    setSaveSuccess("")
+
+    try {
+      await updateDoc(doc(db, "rsvps", currentForm.id), {
+        ...normalized,
+        updatedAt: serverTimestamp(),
+      })
+
+      setForm((current) =>
+        current
+          ? {
+              ...current,
+              name: normalized.fullName,
+              email: normalized.email,
+              attendanceStatus: normalized.attendanceStatus,
+              partySize: normalized.partySize,
+              plusOneName: normalized.plusOneName,
+              mealChoice: normalized.mealChoice,
+              dietaryRestrictions: normalized.dietaryRestrictions,
+              songRequest: normalized.songRequest,
+              notes: normalized.notes,
+            }
+          : current,
+      )
+      setSaveSuccess("RSVP updated successfully.")
+      window.setTimeout(() => {
+        onSaved()
+      }, 700)
+    } catch (error) {
+      console.error("Failed to update RSVP:", error)
+      setSaveError("We couldn't save these RSVP changes right now. Please try again in a moment.")
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
     <Dialog open={Boolean(record)} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="font-serif text-2xl text-[var(--navy)]">RSVP Details</DialogTitle>
-          <DialogDescription>Review the Firestore RSVP data for this guest. Editing is not connected in this phase.</DialogDescription>
+          <DialogTitle className="font-serif text-2xl text-[var(--navy)]">Edit RSVP</DialogTitle>
+          <DialogDescription>Update this guest's Firestore RSVP details and save the changes live.</DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-2 sm:grid-cols-2">
           <Field label="Guest name">
-            <Input value={form.name} onChange={(event) => updateField("name", event.target.value)} disabled />
+            <Input value={form.name} onChange={(event) => updateField("name", event.target.value)} disabled={isSaving} />
           </Field>
           <Field label="Email address">
-            <Input value={form.email} onChange={(event) => updateField("email", event.target.value)} disabled />
+            <Input value={form.email} onChange={(event) => updateField("email", event.target.value)} disabled={isSaving} />
           </Field>
           <Field label="Attendance status">
             <select
-              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:pointer-events-none disabled:opacity-100"
+              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
               value={form.attendanceStatus}
               onChange={(event) => updateField("attendanceStatus", event.target.value as RsvpStatus)}
-              disabled
+              disabled={isSaving}
             >
               <option value="attending">Attending</option>
               <option value="pending">Pending</option>
@@ -679,21 +823,26 @@ function RsvpDetailsDialog({
           <Field label="Party size">
             <Input
               type="number"
-              min={1}
+              min={0}
+              max={2}
               value={form.partySize}
               onChange={(event) => updateField("partySize", Number(event.target.value || 0))}
-              disabled
+              disabled={isSaving}
             />
           </Field>
           <Field label="Plus one name">
-            <Input value={form.plusOneName} onChange={(event) => updateField("plusOneName", event.target.value)} disabled />
+            <Input
+              value={form.plusOneName}
+              onChange={(event) => updateField("plusOneName", event.target.value)}
+              disabled={isSaving}
+            />
           </Field>
           <Field label="Meal choice">
             <select
-              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:pointer-events-none disabled:opacity-100"
+              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
               value={form.mealChoice}
               onChange={(event) => updateField("mealChoice", event.target.value as MealChoice)}
-              disabled
+              disabled={isSaving}
             >
               <option value="">No selection</option>
               {mealOptions.map((meal) => (
@@ -708,18 +857,22 @@ function RsvpDetailsDialog({
               value={form.dietaryRestrictions}
               onChange={(event) => updateField("dietaryRestrictions", event.target.value)}
               placeholder="Any allergies or dietary notes"
-              disabled
+              disabled={isSaving}
             />
           </Field>
           <Field label="Song request" className="sm:col-span-2">
-            <Input value={form.songRequest} onChange={(event) => updateField("songRequest", event.target.value)} disabled />
+            <Input
+              value={form.songRequest}
+              onChange={(event) => updateField("songRequest", event.target.value)}
+              disabled={isSaving}
+            />
           </Field>
           <Field label="Notes" className="sm:col-span-2">
             <Textarea
               value={form.notes}
               onChange={(event) => updateField("notes", event.target.value)}
               rows={4}
-              disabled
+              disabled={isSaving}
             />
           </Field>
           <Field label="Firestore document ID" className="sm:col-span-2">
@@ -727,8 +880,24 @@ function RsvpDetailsDialog({
           </Field>
         </div>
 
+        {saveError ? (
+          <p className="rounded-2xl border border-[rgba(128,63,56,0.18)] bg-[rgba(128,63,56,0.08)] px-4 py-3 text-sm text-[var(--burgundy)]">
+            {saveError}
+          </p>
+        ) : null}
+        {saveSuccess ? (
+          <p className="rounded-2xl border border-[rgba(88,117,102,0.22)] bg-[rgba(88,117,102,0.1)] px-4 py-3 text-sm text-[var(--sage)]">
+            {saveSuccess}
+          </p>
+        ) : null}
+
         <div className="flex justify-end gap-2">
-          <Button onClick={onClose}>Close</Button>
+          <Button variant="outline" onClick={onClose} disabled={isSaving}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave} disabled={isSaving}>
+            {isSaving ? "Saving..." : "Save changes"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
