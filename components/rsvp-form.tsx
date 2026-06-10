@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { addDoc, collection, serverTimestamp } from "firebase/firestore"
+import { doc, serverTimestamp, setDoc } from "firebase/firestore"
 import { Check, CalendarHeart, PartyPopper, Heart } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -164,10 +164,12 @@ export function RsvpForm() {
     try {
       const isAttending = form.attendanceStatus === "attending"
       const partySize = isAttending ? Number(form.partySize) : 0
+      const normalizedEmail = normalizeEmail(form.email)
+      const rsvpRef = doc(db, "rsvps", getRsvpDocumentId(normalizedEmail))
 
-      await addDoc(collection(db, "rsvps"), {
+      await setDoc(rsvpRef, {
         fullName: form.fullName.trim(),
-        email: form.email.trim(),
+        email: normalizedEmail,
         attendanceStatus: form.attendanceStatus,
         partySize,
         plusOneName: partySize > 1 ? form.plusOneName.trim() : "",
@@ -182,7 +184,7 @@ export function RsvpForm() {
       setSubmitted(true)
     } catch (error) {
       console.error("Failed to submit RSVP:", error)
-      setSubmitError("Something went wrong while sending your RSVP. Please try again in a moment.")
+      setSubmitError(getRsvpSubmitErrorMessage(error))
     } finally {
       setIsSubmitting(false)
     }
@@ -409,6 +411,27 @@ export function RsvpForm() {
       </CardContent>
     </Card>
   )
+}
+
+function normalizeEmail(email: string) {
+  return email.trim().toLowerCase()
+}
+
+function getRsvpDocumentId(normalizedEmail: string) {
+  return encodeURIComponent(normalizedEmail)
+}
+
+function getRsvpSubmitErrorMessage(error: unknown) {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === "permission-denied"
+  ) {
+    return "An RSVP already exists for this email. If you need to make a change, please contact us and we'll be happy to update it."
+  }
+
+  return "Something went wrong while sending your RSVP. Please try again in a moment."
 }
 
 function Field({
