@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
-import { CalendarHeart, Church, GlassWater, MapPin, Plane } from "lucide-react"
+import { CalendarHeart, ChevronDown, Church, GlassWater, MapPin, Plane } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -96,10 +96,17 @@ export default function HomePage() {
             </Button>
           </div>
         </div>
+        <a
+          href="#welcome"
+          className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1 text-[var(--navy-foreground)]/78 transition-colors hover:text-[var(--navy-foreground)]"
+        >
+          <span className="text-[0.68rem] uppercase tracking-[0.28em]">Scroll for more</span>
+          <ChevronDown className="size-5" />
+        </a>
       </section>
 
       {/* Welcome message */}
-      <section className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6">
+      <section id="welcome" className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6">
         <SectionHeading
           eyebrow="Welcome"
           title="We are honored to celebrate with you"
