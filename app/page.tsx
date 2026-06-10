@@ -98,7 +98,7 @@ export default function HomePage() {
         </div>
         <a
           href="#welcome"
-          className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1 text-[var(--navy-foreground)]/78 transition-colors hover:text-[var(--navy-foreground)]"
+          className="absolute bottom-16 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1 text-[var(--navy-foreground)]/78 transition-colors hover:text-[var(--navy-foreground)] sm:bottom-12"
         >
           <span className="text-[0.68rem] uppercase tracking-[0.28em]">Scroll for more</span>
           <ChevronDown className="size-5" />
