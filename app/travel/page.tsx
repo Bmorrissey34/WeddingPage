@@ -133,7 +133,7 @@ export default function TravelPage() {
             </CardContent>
           </Card>
 
-          <div className="mx-auto mt-8 max-w-3xl rounded-[2rem] border border-[rgba(34,49,63,0.1)] bg-[rgba(255,252,247,0.82)] p-6 shadow-[0_18px_50px_rgba(61,42,32,0.08)] sm:p-8">
+          <div className="mx-auto mt-8 max-w-2xl rounded-[2rem] border border-[rgba(34,49,63,0.1)] bg-[rgba(255,252,247,0.82)] p-6 shadow-[0_18px_50px_rgba(61,42,32,0.08)] sm:p-8">
             <div className="space-y-2">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--burgundy)]">
                 Nearby Options
@@ -145,11 +145,11 @@ export default function TravelPage() {
               </p>
             </div>
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <div className="mt-6 flex flex-col gap-3">
               {nearbyHotels.map((hotel) => (
                 <div
                   key={hotel.id}
-                  className="rounded-2xl border border-[rgba(34,49,63,0.08)] bg-white/70 p-4"
+                  className="rounded-2xl border border-[rgba(34,49,63,0.08)] bg-white/70 p-5"
                 >
                   <h4 className="font-serif text-lg text-foreground">{hotel.name}</h4>
                   <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{hotel.note}</p>
@@ -159,15 +159,15 @@ export default function TravelPage() {
                       <span className="font-serif tracking-[0.02em] text-foreground">{hotel.phone}</span>
                     </p>
                   ) : null}
-                  <a
-                    href={hotel.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={`mt-3 ${travelLinkClassName}`}
-                  >
-                    View hotel
-                  </a>
-                  <div className="mt-2 flex flex-wrap gap-3 text-sm">
+                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+                    <a
+                      href={hotel.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={travelLinkClassName}
+                    >
+                      View hotel
+                    </a>
                     <a
                       href={getGoogleMapsUrl(`${hotel.name}, Savannah, GA`)}
                       target="_blank"
@@ -206,7 +206,8 @@ export default function TravelPage() {
               src="/images/savannah-square.png"
               alt="A historic Savannah square with a fountain and oak trees"
               fill
-              className="object-cover"
+              loading="eager"
+              className="object-cover object-center"
             />
           </div>
 
