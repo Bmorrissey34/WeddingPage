@@ -1,0 +1,43 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    function hasRequiredRsvpFields() {
+      return request.resource.data.fullName is string
+        && request.resource.data.fullName.size() > 0
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 0
+        && request.resource.data.attendanceStatus is string
+        && request.resource.data.attendanceStatus in ["attending", "declined", "pending"]
+        && request.resource.data.submittedAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
+    }
+
+    function hasValidOptionalRsvpFields() {
+      return (!("partySize" in request.resource.data) || request.resource.data.partySize is number)
+        && (!("plusOneName" in request.resource.data) || request.resource.data.plusOneName is string)
+        && (!("mealChoice" in request.resource.data) || request.resource.data.mealChoice is string)
+        && (!("dietaryRestrictions" in request.resource.data) || request.resource.data.dietaryRestrictions is string)
+        && (!("songRequest" in request.resource.data) || request.resource.data.songRequest is string)
+        && (!("notes" in request.resource.data) || request.resource.data.notes is string);
+    }
+
+    function isValidRsvpWrite() {
+      return hasRequiredRsvpFields() && hasValidOptionalRsvpFields();
+    }
+
+    match /rsvps/{rsvpId} {
+      allow create: if isValidRsvpWrite();
+
+      // Guests stay account-free: they cannot read or modify RSVP records.
+      // For now, any authenticated Firebase user is treated as an admin.
+      // Before production, tighten this with custom claims or a specific allowlist.
+      allow get, list, delete: if isAdmin();
+      allow update: if isAdmin() && isValidRsvpWrite();
+    }
+  }
+}
