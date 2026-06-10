@@ -7,7 +7,7 @@ import { registries } from "@/lib/wedding-data"
 
 export const metadata = {
   title: "Registry | A Savannah Wedding",
-  description: "Our wedding registries and honeymoon fund.",
+  description: "Registry details for our wedding celebration will be shared soon.",
 }
 
 export default function RegistryPage() {
@@ -16,7 +16,7 @@ export default function RegistryPage() {
       <PageHeader
         eyebrow="With Gratitude"
         title="The Registry"
-        description="Your presence at our wedding is the greatest gift of all. For those who wish to celebrate with something more, we've gathered a few registries below."
+        description="Your presence at our wedding is the greatest gift of all. We are still putting the finishing touches on our registry and will share those details soon."
       />
 
       <section className="mx-auto max-w-4xl px-4 py-20 sm:px-6">
@@ -39,8 +39,8 @@ export default function RegistryPage() {
                 <p className="text-pretty leading-relaxed text-muted-foreground">
                   {registry.description}
                 </p>
-                <Button variant="outline" className="mt-auto w-full">
-                  View Registry
+                <Button variant="outline" className="mt-auto w-full" disabled>
+                  Details to Come
                   <ExternalLink data-icon="inline-end" />
                 </Button>
               </CardContent>

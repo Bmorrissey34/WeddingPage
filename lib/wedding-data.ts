@@ -183,32 +183,64 @@ export type Hotel = {
   distance: string
   note: string
   code: string
+  url: string
+  phone?: string
 }
 
-export const hotels: Hotel[] = [
-  {
-    id: "desoto-hotel",
-    name: "The DeSoto",
-    rate: "From $279 / night",
-    distance: "Reception venue · Historic District",
-    note: "Our recommended hotel and reception venue. Stay where the celebration happens.",
-    code: "HAVRON-MORRISSEY",
-  },
+export const hotelBlock: Hotel = {
+  id: "desoto-hotel",
+  name: "The DeSoto",
+  rate: "From $279 / night",
+  distance: "Reception venue · Historic District",
+  note: "Our only room block will be at The DeSoto, where the reception will also be held. Stay where the celebration happens and enjoy the easiest walk home at the end of the evening.",
+  code: "TBD",
+  url: "https://www.thedesotosavannah.com/",
+  phone: "(912) 232-9000",
+}
+
+export type NearbyHotel = {
+  id: string
+  name: string
+  note: string
+  url: string
+  phone?: string
+}
+
+export const nearbyHotels: NearbyHotel[] = [
   {
     id: "perry-lane",
     name: "Perry Lane Hotel",
-    rate: "From $329 / night",
-    distance: "0.4 miles from The DeSoto",
-    note: "A refined boutique stay with a rooftop bar overlooking the Historic District.",
-    code: "EJ2026",
+    note: "A polished boutique stay for guests looking for a luxe Savannah weekend in the Historic District.",
+    url: "https://www.perrylanehotel.com/",
+    phone: "(912) 415-9000",
   },
   {
     id: "marshall-house",
     name: "The Marshall House",
-    rate: "From $239 / night",
-    distance: "0.5 miles from The DeSoto",
-    note: "Historic charm on Broughton Street, within walking distance of both venues.",
-    code: "EJWEDDING",
+    note: "A beloved historic Savannah hotel with classic Southern character and plenty of charm.",
+    url: "https://www.marshallhouse.com/",
+    phone: "(912) 644-7896",
+  },
+  {
+    id: "hyatt-regency-savannah",
+    name: "Hyatt Regency Savannah",
+    note: "A reliable waterfront chain option for guests who prefer a larger full-service hotel.",
+    url: "https://www.hyatt.com/hyatt-regency/en-US/savrs-hyatt-regency-savannah",
+    phone: "(912) 238-1234",
+  },
+  {
+    id: "andaz-savannah",
+    name: "Andaz Savannah",
+    note: "A stylish chain hotel near City Market with convenient access to the Historic District.",
+    url: "https://www.hyatt.com/andaz/en-US/savaz-andaz-savannah",
+    phone: "(912) 233-2116",
+  },
+  {
+    id: "holiday-inn-express-savannah-historic-district",
+    name: "Holiday Inn Express Savannah Historic District",
+    note: "A straightforward chain stay for guests who want a comfortable and convenient home base downtown.",
+    url: "https://www.ihg.com/holidayinnexpress/hotels/us/en/savannah/savhd/hoteldetail",
+    phone: "+1-912-292-0350",
   },
 ]
 
@@ -268,7 +300,7 @@ export const faqs: Faq[] = [
   {
     question: "Have hotel blocks been reserved?",
     answer:
-      "Yes. We have arranged room blocks at several nearby hotels. Please see the Travel page for booking codes and rates.",
+      "Yes. Our room block will be at The DeSoto. We will also share a few nearby hotel suggestions on the Travel page for guests who would prefer other accommodations.",
   },
   {
     question: "What time does the ceremony begin?",
@@ -312,10 +344,12 @@ export type RegistryItem = {
 }
 
 export const registries: RegistryItem[] = [
-  { id: "crate", name: "Crate & Barrel", description: "Home essentials and elegant tableware for our new chapter together." },
-  { id: "williams", name: "Williams Sonoma", description: "Kitchen and entertaining pieces for the dinners we hope to host." },
-  { id: "honeymoon", name: "Honeymoon Fund", description: "Contribute to our first journey together as husband and wife." },
-  { id: "zola", name: "Zola Registry", description: "A curated collection of gifts to help us build our home." },
+  {
+    id: "tbd",
+    name: "Registry Details to Come",
+    description:
+      "We are still finalizing our registry and will share those details once everything is in place. Thank you for your patience and for celebrating this season with us.",
+  },
 ]
 
 export type ThingToDo = {
@@ -331,6 +365,10 @@ export const thingsToDo: ThingToDo[] = [
   { id: "bonaventure", name: "Bonaventure Cemetery", category: "See", description: "A hauntingly beautiful historic cemetery draped in Spanish moss." },
   { id: "grey", name: "The Grey", category: "Eat", description: "Award-winning Southern cuisine set in a restored 1938 Greyhound terminal." },
   { id: "olde-pink", name: "The Olde Pink House", category: "Eat", description: "Classic Lowcountry fare in a historic 18th-century mansion." },
+  { id: "sorry-charlies", name: "Sorry Charlie's", category: "Eat", description: "A lively downtown favorite for seafood, oysters, and an easygoing Savannah atmosphere." },
+  { id: "the-public", name: "The Public", category: "Eat", description: "A stylish neighborhood spot for a relaxed meal and cocktails in the heart of downtown." },
   { id: "perch", name: "Peregrin Rooftop", category: "Drink", description: "Cocktails with sweeping views over the Historic District." },
   { id: "myrtle", name: "Artillery Bar", category: "Drink", description: "An elegant cocktail lounge in a converted historic armory." },
+  { id: "rocks-on-the-roof", name: "Rocks on the Roof", category: "Drink", description: "A rooftop perch for drinks with river views and a lively evening scene." },
+  { id: "totally-awesome-bar", name: "Totally Awesome Bar", category: "Drink", description: "Our favorite stop for a fun night out, with a playful atmosphere that always makes for a memorable evening." },
 ]
