@@ -151,14 +151,14 @@ export const storyMoments: StoryMoment[] = [
     year: "2021",
     title: "A Chance Sublet",
     body: "Brendan and Morgan met in 2021 when Brendan was searching for a new apartment and Morgan was subleasing as she prepared to move into her condo. Although their paths first crossed in a practical way, and they somewhat fancied each other in their limited interactions, neither truly entertained a romance until a few months later. Morgan accidentally, as she still insists, forgot to update her address, and mail continued arriving at Brendan's apartment. That small mix-up gave them a reason to reconnect, and before long, one conversation led to another.",
-    image: null,
+    image: "/images/sublet.JPG",
   },
   {
     id: "savannah",
     year: "2023",
     title: "Savannah, Our Kind of Place",
     body: "In May 2023, Brendan and Morgan took their first trip to Savannah with Brendan's parents. There was something about the moss-draped oaks, the quiet streets, and the unhurried charm of the city that stayed with them. From that visit on, Savannah felt woven into their story, and choosing it for their wedding felt both natural and deeply meaningful.",
-    image: null,
+    image: "/images/savannah.JPG",
   },
   {
     id: "proposal",
