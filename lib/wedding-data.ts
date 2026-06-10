@@ -12,7 +12,7 @@ export const wedding = {
     dateLong: "Saturday, November 14, 2026",
     dateShort: "11 . 14 . 2026",
   city: "Savannah, Georgia",
-  hashtag: "#HavronMeetsMorrissey",
+  hashtag: "#MeetUsInTheMoss",
   rsvpDeadline: "April 1, 2026",
 }
 
@@ -150,29 +150,29 @@ export const storyMoments: StoryMoment[] = [
     id: "met",
     year: "2021",
     title: "A Chance Sublet",
-    body: "We met in 2021 when Brendan was searching for a new apartment and Morgan was subleasing hers. Although our paths crossed at first in a practical way, we did not truly begin talking until a package meant for Morgan's old address was delivered by mistake. That small mix-up gave us a reason to reconnect, and before long, one conversation led to another.",
-    image: "/images/engagement-1.png",
+    body: "Brendan and Morgan met in 2021 when Brendan was searching for a new apartment and Morgan was subleasing as she prepared to move into her condo. Although their paths first crossed in a practical way, and they somewhat fancied each other in their limited interactions, neither truly entertained a romance until a few months later. Morgan accidentally, as she still insists, forgot to update her address, and mail continued arriving at Brendan's apartment. That small mix-up gave them a reason to reconnect, and before long, one conversation led to another.",
+    image: null,
   },
   {
     id: "savannah",
     year: "2023",
     title: "Savannah, Our Kind of Place",
-    body: "In May 2023, we took our first trip to Savannah with Brendan's parents. There was something about the moss-draped oaks, the quiet streets, and the unhurried charm of the city that stayed with us. From that visit on, Savannah felt woven into our story, and choosing it for our wedding felt both natural and deeply meaningful.",
+    body: "In May 2023, Brendan and Morgan took their first trip to Savannah with Brendan's parents. There was something about the moss-draped oaks, the quiet streets, and the unhurried charm of the city that stayed with them. From that visit on, Savannah felt woven into their story, and choosing it for their wedding felt both natural and deeply meaningful.",
     image: null,
   },
   {
     id: "proposal",
     year: "2024",
     title: "A Hike and a Drone",
-    body: "On April 26, 2024, our story took its next beautiful step at Rainbow Falls in Chattanooga. Brendan planned a proposal on a rock beneath the falls and filmed the moment with a drone, since it was no small task to find a photographer willing to hike two miles downhill through the forest. It was a joyful, unforgettable day, and of course, the answer was yes.",
-    image: "/images/engagement-2.png",
+    body: "On April 26, 2024, their story took its next step at Rainbow Falls in Chattanooga. Brendan planned a proposal on a rock beneath the falls and filmed the moment with a drone, since it was no small task to find a photographer willing to hike two miles downhill through the forest. It was a joyful, unforgettable day, and of course, the answer was yes.",
+    image: null,
   },
   {
     id: "forever",
     year: "2026",
     title: "See You in Savannah",
-    body: "Now, with so many treasured memories tied to that city, we are overjoyed to celebrate our wedding in Savannah on November 14, 2026. We cannot wait to gather with the people we love most and share the place that has meant so much to us from the very beginning.",
-    image: null,
+    body: "Now, with so many treasured memories tied to that city, Morgan and Brendan are overjoyed to celebrate their wedding in Savannah on November 14, 2026. They cannot wait to gather with the people they love most and share the place that has meant so much to them from the very beginning.",
+    image: "/images/engagement-1.png",
   },
 ]
 

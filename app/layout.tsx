@@ -25,7 +25,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Morgan & Brendan | A Savannah Wedding',
   description:
-    'We are honored to celebrate with you in Savannah, Georgia. Join us for the wedding of Eleanor Whitfield and James Calloway.',
+    'Join Morgan Havron and Brendan Morrissey in Savannah, Georgia for a warm, elegant wedding weekend.',
   generator: 'v0.app',
 }
 

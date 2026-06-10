@@ -15,7 +15,7 @@ export default function StoryPage() {
       <PageHeader
         eyebrow="Our Story"
         title="How We Came to Be"
-        description="Every love story is beautiful, but ours is our favorite. Here are a few of the moments that brought us here."
+        description="A few of the moments that brought Brendan and Morgan from a chance meeting to a Savannah wedding weekend."
       />
 
       <section className="mx-auto max-w-4xl px-4 py-20 sm:px-6">

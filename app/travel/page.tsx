@@ -72,7 +72,7 @@ export default function TravelPage() {
         <SectionHeading
           eyebrow="Where to Stay"
           title="Hotel Blocks"
-          description="Our only room block will be at The DeSoto. Mention the booking code when reserving to receive our group rate."
+          description="Our only room block will be at The DeSoto. You may use the booking link below or reference the room block code when reserving."
         />
         <div className="mt-12">
           <Card className="mx-auto flex max-w-2xl flex-col">
