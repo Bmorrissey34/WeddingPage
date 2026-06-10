@@ -18,7 +18,7 @@ export function SiteFooter() {
             Together with their families
           </p>
           <h2 className="mt-4 font-serif text-4xl font-semibold text-[var(--navy-foreground)] sm:text-5xl">
-            {wedding.brideFirst} <span className="text-[var(--sage)]">&amp;</span>{" "}
+            {wedding.brideFirst} <span className="text-[color-mix(in_oklch,var(--burgundy),white_18%)]">&amp;</span>{" "}
             {wedding.groomFirst}
           </h2>
           <p className="mt-3 text-sm tracking-[0.2em] text-[var(--navy-foreground)]/80">
@@ -33,7 +33,7 @@ export function SiteFooter() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-[var(--navy-foreground)]/75 transition-colors hover:text-[var(--sage)]"
+              className="text-sm text-[var(--navy-foreground)]/75 transition-colors hover:text-[color-mix(in_oklch,var(--burgundy),white_18%)]"
             >
               {link.label}
             </Link>

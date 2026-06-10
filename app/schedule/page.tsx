@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { getAppleMapsUrl, getGoogleMapsUrl, hasSpecificMapLocation } from "@/lib/map-links"
 import { schedule } from "@/lib/wedding-data"
 
 export const metadata = {
@@ -23,8 +24,15 @@ export default function SchedulePage() {
 
       <section className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
         <div className="flex flex-col gap-8">
-          {schedule.map((event) => (
-            <Card key={event.id} className="overflow-hidden">
+          {schedule.map((event) => {
+            const mapsQuery = `${event.location}, ${event.address}`
+            const hasMaps =
+              event.status !== "tbd" &&
+              hasSpecificMapLocation(event.location) &&
+              hasSpecificMapLocation(event.address)
+
+            return (
+              <Card key={event.id} className="overflow-hidden">
               <CardHeader>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="flex flex-col gap-1">
@@ -60,18 +68,39 @@ export default function SchedulePage() {
                 </p>
 
                 <div>
-                  <Button
-                    variant="outline"
-                    disabled={event.status === "tbd"}
-                    aria-disabled={event.status === "tbd"}
-                  >
-                    <Navigation data-icon="inline-start" />
-                    {event.status === "tbd" ? "Directions Coming Soon" : "Get Directions"}
-                  </Button>
+                  {hasMaps ? (
+                    <div className="flex flex-wrap gap-3">
+                      <Button
+                        variant="outline"
+                        render={<a href={getGoogleMapsUrl(mapsQuery)} target="_blank" rel="noreferrer" />}
+                        nativeButton={false}
+                      >
+                        <Navigation data-icon="inline-start" />
+                        Google Maps
+                      </Button>
+                      <Button
+                        variant="outline"
+                        render={<a href={getAppleMapsUrl(mapsQuery)} target="_blank" rel="noreferrer" />}
+                        nativeButton={false}
+                      >
+                        Apple Maps
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      disabled
+                      aria-disabled
+                    >
+                      <Navigation data-icon="inline-start" />
+                      Directions Coming Soon
+                    </Button>
+                  )}
                 </div>
               </CardContent>
-            </Card>
-          ))}
+              </Card>
+            )
+          })}
         </div>
       </section>
     </>

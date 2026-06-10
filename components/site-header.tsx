@@ -53,7 +53,7 @@ export function SiteHeader() {
               >
                 {link.label}
                 {active && (
-                  <span className="mx-auto mt-0.5 block h-px w-4 bg-[var(--sage)]" />
+                  <span className="mx-auto mt-0.5 block h-px w-4 bg-[color-mix(in_oklch,var(--burgundy),white_8%)]" />
                 )}
               </Link>
             )

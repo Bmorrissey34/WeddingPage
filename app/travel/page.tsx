@@ -12,6 +12,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { getAppleMapsUrl, getGoogleMapsUrl } from "@/lib/map-links"
 import { hotelBlock, nearbyHotels, thingsToDo } from "@/lib/wedding-data"
 
 export const metadata = {
@@ -20,13 +21,12 @@ export const metadata = {
 }
 
 const categories = ["See", "Eat", "Drink"] as const
-const travelSections = [
-  { href: "#hotel-blocks", label: "Hotel Blocks" },
-  { href: "#travel-logistics", label: "Travel Logistics" },
-  { href: "#things-to-do", label: "Things to Do" },
-] as const
+const travelLinkClassName =
+  "inline-flex text-sm font-serif tracking-[0.02em] text-[var(--navy)] underline decoration-[rgba(34,49,63,0.28)] underline-offset-4 transition-colors hover:text-[var(--burgundy)]"
 
 export default function TravelPage() {
+  const hotelBlockMapsQuery = `${hotelBlock.name}, Savannah, GA`
+
   return (
     <>
       <PageHeader
@@ -35,111 +35,8 @@ export default function TravelPage() {
         description="Whether you're traveling near or far, here is everything you need for a seamless stay in Savannah."
       />
 
-      <section className="mx-auto max-w-5xl px-4 pt-8 sm:px-6">
-        <div className="rounded-full border border-[rgba(34,49,63,0.1)] bg-[rgba(255,252,247,0.88)] p-2 shadow-[0_12px_36px_rgba(61,42,32,0.08)]">
-          <nav aria-label="Travel section navigation" className="flex flex-wrap justify-center gap-2">
-            {travelSections.map((section) => (
-              <a
-                key={section.href}
-                href={section.href}
-                className="rounded-full px-4 py-2 text-sm font-medium text-[var(--navy)] transition-colors hover:bg-[var(--accent)]"
-              >
-                {section.label}
-              </a>
-            ))}
-          </nav>
-        </div>
-      </section>
-
-      {/* Hotels */}
-      <section id="hotel-blocks" className="mx-auto max-w-5xl scroll-mt-28 px-4 py-20 sm:px-6">
-        <SectionHeading
-          eyebrow="Where to Stay"
-          title="Hotel Blocks"
-          description="Our only room block will be at The DeSoto. Mention the booking code when reserving to receive our group rate."
-        />
-        <div className="mt-12">
-          <Card className="mx-auto flex max-w-2xl flex-col">
-            <CardHeader>
-              <span className="flex size-11 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--navy)]">
-                <Hotel className="size-5" />
-              </span>
-              <CardTitle className="mt-3 font-serif text-2xl">
-                {hotelBlock.name}
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">{hotelBlock.distance}</p>
-            </CardHeader>
-            <CardContent className="flex flex-1 flex-col gap-4">
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {hotelBlock.note}
-              </p>
-              {hotelBlock.phone ? (
-                <p className="text-sm text-muted-foreground">
-                  Phone: <span className="font-medium text-foreground">{hotelBlock.phone}</span>
-                </p>
-              ) : null}
-              <div className="mt-auto flex flex-col gap-3">
-                <p className="font-serif text-lg text-foreground">{hotelBlock.rate}</p>
-                <div className="flex items-center justify-between rounded-md border border-dashed border-border bg-secondary px-3 py-2">
-                  <span className="font-mono text-xs tracking-wide text-foreground">
-                    {hotelBlock.code}
-                  </span>
-                  <Copy className="size-3.5 text-muted-foreground" />
-                </div>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  render={<a href={hotelBlock.url} target="_blank" rel="noreferrer" />}
-                  nativeButton={false}
-                >
-                  Book a Room
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="mx-auto mt-8 max-w-3xl rounded-[2rem] border border-[rgba(34,49,63,0.1)] bg-[rgba(255,252,247,0.82)] p-6 shadow-[0_18px_50px_rgba(61,42,32,0.08)] sm:p-8">
-            <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--burgundy)]">
-                Nearby Options
-              </p>
-              <h3 className="font-serif text-2xl text-[var(--navy)]">Other nearby hotels to consider</h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                If you would prefer to stay elsewhere, these are a few nearby Savannah properties that are also close
-                to the wedding weekend festivities.
-              </p>
-            </div>
-
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              {nearbyHotels.map((hotel) => (
-                <div
-                  key={hotel.id}
-                  className="rounded-2xl border border-[rgba(34,49,63,0.08)] bg-white/70 p-4"
-                >
-                  <h4 className="font-serif text-lg text-foreground">{hotel.name}</h4>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{hotel.note}</p>
-                  {hotel.phone ? (
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Phone: <span className="font-medium text-foreground">{hotel.phone}</span>
-                    </p>
-                  ) : null}
-                  <a
-                    href={hotel.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-3 inline-flex text-sm font-medium text-[var(--navy)] underline decoration-[rgba(34,49,63,0.28)] underline-offset-4"
-                  >
-                    View hotel
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Getting Around */}
-      <section id="travel-logistics" className="scroll-mt-28 bg-secondary/60 py-20">
+      <section id="travel-logistics" className="bg-secondary/60 py-20">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <SectionHeading
             eyebrow="Getting Around"
@@ -170,8 +67,133 @@ export default function TravelPage() {
         </div>
       </section>
 
+      {/* Hotels */}
+      <section id="hotel-blocks" className="mx-auto max-w-5xl px-4 py-20 sm:px-6">
+        <SectionHeading
+          eyebrow="Where to Stay"
+          title="Hotel Blocks"
+          description="Our only room block will be at The DeSoto. Mention the booking code when reserving to receive our group rate."
+        />
+        <div className="mt-12">
+          <Card className="mx-auto flex max-w-2xl flex-col">
+            <CardHeader>
+              <span className="flex size-11 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--navy)]">
+                <Hotel className="size-5" />
+              </span>
+              <CardTitle className="mt-3 font-serif text-2xl">
+                {hotelBlock.name}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">{hotelBlock.distance}</p>
+            </CardHeader>
+            <CardContent className="flex flex-1 flex-col gap-4">
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {hotelBlock.note}
+              </p>
+              {hotelBlock.phone ? (
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-serif tracking-[0.02em] text-foreground">Phone:</span>{" "}
+                  <span className="font-serif tracking-[0.02em] text-foreground">{hotelBlock.phone}</span>
+                </p>
+              ) : null}
+              <div className="mt-auto flex flex-col gap-3">
+                <p className="font-serif text-lg text-foreground">{hotelBlock.rate}</p>
+                <div className="flex items-center justify-between rounded-md border border-dashed border-border bg-secondary px-3 py-2">
+                  <span className="font-mono text-xs tracking-wide text-foreground">
+                    {hotelBlock.code}
+                  </span>
+                  <Copy className="size-3.5 text-muted-foreground" />
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  render={<a href={hotelBlock.url} target="_blank" rel="noreferrer" />}
+                  nativeButton={false}
+                >
+                  Book a Room
+                </Button>
+                <div className="flex flex-wrap gap-3 text-sm">
+                  <a
+                    href={getGoogleMapsUrl(hotelBlockMapsQuery)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={travelLinkClassName}
+                  >
+                    Google Maps
+                  </a>
+                  <a
+                    href={getAppleMapsUrl(hotelBlockMapsQuery)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={travelLinkClassName}
+                  >
+                    Apple Maps
+                  </a>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="mx-auto mt-8 max-w-3xl rounded-[2rem] border border-[rgba(34,49,63,0.1)] bg-[rgba(255,252,247,0.82)] p-6 shadow-[0_18px_50px_rgba(61,42,32,0.08)] sm:p-8">
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--burgundy)]">
+                Nearby Options
+              </p>
+              <h3 className="font-serif text-2xl text-[var(--navy)]">Other nearby hotels to consider</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                If you would prefer to stay elsewhere, these are a few nearby Savannah properties that are also close
+                to the wedding weekend festivities.
+              </p>
+            </div>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              {nearbyHotels.map((hotel) => (
+                <div
+                  key={hotel.id}
+                  className="rounded-2xl border border-[rgba(34,49,63,0.08)] bg-white/70 p-4"
+                >
+                  <h4 className="font-serif text-lg text-foreground">{hotel.name}</h4>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{hotel.note}</p>
+                  {hotel.phone ? (
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      <span className="font-serif tracking-[0.02em] text-foreground">Phone:</span>{" "}
+                      <span className="font-serif tracking-[0.02em] text-foreground">{hotel.phone}</span>
+                    </p>
+                  ) : null}
+                  <a
+                    href={hotel.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`mt-3 ${travelLinkClassName}`}
+                  >
+                    View hotel
+                  </a>
+                  <div className="mt-2 flex flex-wrap gap-3 text-sm">
+                    <a
+                      href={getGoogleMapsUrl(`${hotel.name}, Savannah, GA`)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={travelLinkClassName}
+                    >
+                      Google Maps
+                    </a>
+                    <a
+                      href={getAppleMapsUrl(`${hotel.name}, Savannah, GA`)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={travelLinkClassName}
+                    >
+                      Apple Maps
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Things to do */}
-      <section id="things-to-do" className="mx-auto max-w-5xl scroll-mt-28 px-4 py-20 sm:px-6">
+      <section id="things-to-do" className="mx-auto max-w-5xl px-4 py-20 sm:px-6">
         <SectionHeading
           eyebrow="Make a Weekend of It"
           title="Things to Do in Savannah"
@@ -214,6 +236,24 @@ export default function TravelPage() {
                       <p className="text-sm leading-relaxed text-muted-foreground">
                         {item.description}
                       </p>
+                      <div className="mt-2 flex flex-wrap gap-3 text-sm">
+                        <a
+                          href={getGoogleMapsUrl(`${item.name}, Savannah, GA`)}
+                          target="_blank"
+                          rel="noreferrer"
+                          className={travelLinkClassName}
+                        >
+                          Google Maps
+                        </a>
+                        <a
+                          href={getAppleMapsUrl(`${item.name}, Savannah, GA`)}
+                          target="_blank"
+                          rel="noreferrer"
+                          className={travelLinkClassName}
+                        >
+                          Apple Maps
+                        </a>
+                      </div>
                     </div>
                   ))}
               </TabsContent>
