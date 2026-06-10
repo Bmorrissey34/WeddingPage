@@ -231,7 +231,6 @@ export default function TravelPage() {
                         <h3 className="font-serif text-lg font-semibold text-foreground">
                           {item.name}
                         </h3>
-                        <Badge variant="secondary">{item.category}</Badge>
                       </div>
                       <p className="text-sm leading-relaxed text-muted-foreground">
                         {item.description}

@@ -232,7 +232,7 @@ export const nearbyHotels: NearbyHotel[] = [
     id: "andaz-savannah",
     name: "Andaz Savannah",
     note: "A stylish chain hotel near City Market with convenient access to the Historic District.",
-    url: "https://www.hyatt.com/andaz/en-US/savaz-andaz-savannah",
+    url: "https://www.hyatt.com/andaz/en-US/savrd-andaz-savannah",
     phone: "(912) 233-2116",
   },
   {
