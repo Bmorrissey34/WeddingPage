@@ -14,7 +14,6 @@ export const wedding = {
   city: "Savannah, Georgia",
   hashtag: "#HavronMeetsMorrissey",
   rsvpDeadline: "April 1, 2026",
-  contactEmail: "wedding@email.com",
 }
 
 export type NavLink = { label: string; href: string }
@@ -45,7 +44,7 @@ export const schedule: ScheduleEvent[] = [
   {
     id: "welcome",
     title: "Welcome Party",
-    date: "Friday, May 15, 2026",
+    date: "Friday, November 13, 2026",
     time: "7:00 PM – 10:00 PM",
     location: "Location to be announced",
     address: "Savannah, Georgia",
@@ -57,7 +56,7 @@ export const schedule: ScheduleEvent[] = [
   {
     id: "ceremony",
     title: "The Ceremony",
-    date: "Saturday, May 16, 2026",
+    date: "Saturday, November 14, 2026",
     time: "4:30 PM",
     location: "Trinity Methodist Church",
     address: "225 W President St, Savannah, GA 31401",
@@ -69,7 +68,7 @@ export const schedule: ScheduleEvent[] = [
   {
     id: "reception",
     title: "The Reception",
-    date: "Saturday, May 16, 2026",
+    date: "Saturday, November 14, 2026",
     time: "6:00 PM – 11:00 PM",
     location: "The DeSoto",
     address: "15 E Liberty St, Savannah, GA 31401",
@@ -81,7 +80,7 @@ export const schedule: ScheduleEvent[] = [
   {
     id: "brunch",
     title: "Farewell Brunch",
-    date: "Sunday, May 17, 2026",
+    date: "Sunday, November 15, 2026",
     time: "10:00 AM – 12:00 PM",
     location: "Location to be announced",
     address: "Savannah, Georgia",
@@ -254,17 +253,17 @@ export const faqs: Faq[] = [
   {
     question: "Can I change my RSVP after submitting?",
     answer:
-      "Certainly. If your plans change, please send us a note at wedding@email.com and we will be glad to update your reply for you.",
+      "Certainly. If your plans change, please reach out to Brendan or Morgan directly, and we will be glad to update your reply for you.",
   },
   {
     question: "What if I made a mistake on my RSVP?",
     answer:
-      "No trouble at all. If you entered the wrong email address, misspelled a name, or need to correct any detail, please reach out to us at wedding@email.com and we will happily make the change.",
+      "No trouble at all. If you entered the wrong email address, misspelled a name, or need to correct any detail, please reach out to Brendan or Morgan directly and we will happily make the change.",
   },
   {
     question: "What if my dietary restriction changes?",
     answer:
-      "We would be grateful to know as soon as possible. Please email wedding@email.com if your meal selection, dietary needs, or your guest's preferences change, and we will do our very best to accommodate them.",
+      "We would be grateful to know as soon as possible. If your meal selection, dietary needs, or your guest's preferences change, please reach out to Brendan or Morgan directly and we will do our very best to accommodate them.",
   },
   {
     question: "Have hotel blocks been reserved?",
@@ -282,9 +281,9 @@ export const faqs: Faq[] = [
       "The reception at The DeSoto will conclude at 11:00 PM, with a farewell send-off to follow.",
   },
   {
-    question: "What is the weather like in Savannah in May?",
+    question: "What is the weather like in Savannah in November?",
     answer:
-      "May in Savannah is warm and lovely, with daytime temperatures in the low 80s°F and pleasant evenings in the upper 60s. Light layers are recommended for the evening.",
+      "November in Savannah is typically mild and comfortable, with daytime temperatures in the upper 60s to low 70s°F and cooler evenings in the 50s. A light wrap or jacket will be lovely to have after sunset.",
   },
 ]
 
@@ -292,17 +291,17 @@ export const rsvpHelpItems: RsvpHelpItem[] = [
   {
     title: "If your plans change",
     body:
-      "Should you need to revise your reply after submitting, please send us a note at wedding@email.com and we will be pleased to update your RSVP on your behalf.",
+      "Should you need to revise your reply after submitting, please reach out to Brendan or Morgan directly and we will be pleased to update your RSVP on your behalf.",
   },
   {
     title: "If you used the wrong email",
     body:
-      "If your RSVP was submitted with an incorrect email address, kindly contact us at wedding@email.com with the correct address and we will make sure everything is amended properly.",
+      "If your RSVP was submitted with an incorrect email address, kindly reach out to Brendan or Morgan directly with the correct one and we will make sure everything is amended properly.",
   },
   {
     title: "If your guest or meal choice changes",
     body:
-      "If your plus-one changes, or if meal selections or dietary restrictions need to be adjusted, please email wedding@email.com and we will happily help with those details.",
+      "If your plus-one changes, or if meal selections or dietary restrictions need to be adjusted, please reach out to Brendan or Morgan directly and we will happily help with those details.",
   },
 ]
 

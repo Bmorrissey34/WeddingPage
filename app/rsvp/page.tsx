@@ -45,14 +45,9 @@ export default function RsvpPage() {
           <div className="mt-6 rounded-2xl border border-[rgba(88,117,102,0.22)] bg-[rgba(88,117,102,0.08)] p-5">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--sage)]">Contact</p>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Kindly email us at{" "}
-              <a
-                href={`mailto:${wedding.contactEmail}`}
-                className="font-medium text-[var(--navy)] underline decoration-[rgba(34,49,63,0.28)] underline-offset-4"
-              >
-                {wedding.contactEmail}
-              </a>{" "}
-              if you need to revise your RSVP, correct an email address, or adjust a guest or meal selection.
+              Need to change your RSVP? Please reach out to Brendan or Morgan directly, and we&apos;ll be happy to
+              update it for you. The same goes for correcting an email address, adjusting a guest name, or revising a
+              meal selection.
             </p>
           </div>
         </div>
