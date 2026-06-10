@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState, type ComponentType, type FormEvent, type ReactNode } from "react"
+import { useEffect, useMemo, useState, type ComponentType, type FormEvent, type ReactNode } from "react"
 import {
   Clock3,
   Download,
@@ -16,6 +16,13 @@ import {
   Users,
   UtensilsCrossed,
 } from "lucide-react"
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  type Auth,
+  type User,
+} from "firebase/auth"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -36,8 +43,6 @@ import { cn } from "@/lib/utils"
 import { mockRsvps, mealOptions, type MealChoice, type RsvpRecord, type RsvpStatus } from "@/lib/rsvp-data"
 import { wedding } from "@/lib/wedding-data"
 
-const LOGIN_PASSWORD = "savannah2026"
-
 type StatusFilter = "all" | RsvpStatus
 type DietaryFilter = "all" | "with" | "none"
 type PlusOneFilter = "all" | "yes" | "no"
@@ -55,21 +60,69 @@ const statusBadgeVariant: Record<RsvpStatus, "default" | "outline" | "secondary"
 }
 
 export function AdminDashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [user, setUser] = useState<User | null>(null)
+  const [firebaseAuth, setFirebaseAuth] = useState<Auth | null>(null)
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
   const [loginError, setLoginError] = useState("")
 
-  if (!isAuthenticated) {
-    return <LoginScreen error={loginError} onSubmit={(password) => {
-      if (password === LOGIN_PASSWORD) {
-        setLoginError("")
-        setIsAuthenticated(true)
-      } else {
-        setLoginError("That password does not match the demo admin access.")
+  useEffect(() => {
+    let isMounted = true
+    let unsubscribe = () => undefined
+
+    async function loadAuth() {
+      const { auth } = await import("@/lib/firebase")
+
+      if (!isMounted) {
+        return
       }
-    }} />
+
+      setFirebaseAuth(auth)
+      unsubscribe = onAuthStateChanged(auth, (nextUser) => {
+        setUser(nextUser)
+        setIsCheckingAuth(false)
+      })
+    }
+
+    void loadAuth()
+
+    return () => {
+      isMounted = false
+      unsubscribe()
+    }
+  }, [])
+
+  async function handleLogin(email: string, password: string) {
+    if (!firebaseAuth) {
+      setLoginError("Admin sign-in is still loading. Please try again.")
+      return
+    }
+
+    setLoginError("")
+
+    try {
+      await signInWithEmailAndPassword(firebaseAuth, email, password)
+    } catch (error) {
+      setLoginError(getLoginErrorMessage(error))
+    }
   }
 
-  return <Dashboard onLogout={() => setIsAuthenticated(false)} />
+  async function handleLogout() {
+    if (!firebaseAuth) {
+      return
+    }
+
+    await signOut(firebaseAuth)
+  }
+
+  if (isCheckingAuth) {
+    return <LoadingScreen />
+  }
+
+  if (!user) {
+    return <LoginScreen error={loginError} onSubmit={handleLogin} />
+  }
+
+  return <Dashboard onLogout={handleLogout} userEmail={user.email} />
 }
 
 function LoginScreen({
@@ -77,13 +130,21 @@ function LoginScreen({
   onSubmit,
 }: {
   error: string
-  onSubmit: (password: string) => void
+  onSubmit: (email: string, password: string) => Promise<void>
 }) {
+  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    onSubmit(password)
+    setIsSubmitting(true)
+
+    try {
+      await onSubmit(email, password)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -102,7 +163,7 @@ function LoginScreen({
                   <div className="space-y-4">
                     <h1 className="font-serif text-4xl leading-tight sm:text-5xl">Wedding Admin</h1>
                     <p className="max-w-md text-sm leading-6 text-[var(--ivory)]/82 sm:text-base">
-                      Demo login for managing RSVP mock data, reviewing meal counts, and testing the editorial dashboard layout.
+                      Sign in to review the RSVP prototype dashboard, meal counts, and planning notes in one place.
                     </p>
                   </div>
                 </div>
@@ -110,7 +171,7 @@ function LoginScreen({
                 <div className="grid gap-3 sm:grid-cols-3">
                   <InfoChip icon={Users} label="Guests" value={`${mockRsvps.length} RSVPs in the prototype`} />
                   <InfoChip icon={Sparkles} label="Workflow" value="Edit, remove, export, and filter locally" />
-                  <InfoChip icon={Clock3} label="Access" value="Password-only mock gate" />
+                  <InfoChip icon={Clock3} label="Access" value="Firebase email/password login" />
                 </div>
               </div>
             </div>
@@ -119,20 +180,31 @@ function LoginScreen({
               <div className="mx-auto flex max-w-md flex-col gap-6">
                 <div className="space-y-2">
                   <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[var(--burgundy)]">Admin Sign In</p>
-                  <h2 className="font-serif text-3xl text-[var(--navy)]">Mock dashboard login</h2>
+                  <h2 className="font-serif text-3xl text-[var(--navy)]">Admin dashboard login</h2>
                   <p className="text-sm leading-6 text-muted-foreground">
-                    This is a frontend-only prototype. No real authentication or backend is involved.
+                    Sign in with the private admin account to access the RSVP management dashboard.
                   </p>
                 </div>
 
                 <form className="space-y-5" onSubmit={handleSubmit}>
                   <div className="space-y-2.5">
-                    <Label htmlFor="admin-password">Admin password</Label>
+                    <Label htmlFor="admin-email">Admin email</Label>
+                    <Input
+                      id="admin-email"
+                      type="email"
+                      autoComplete="email"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2.5">
+                    <Label htmlFor="admin-password">Password</Label>
                     <Input
                       id="admin-password"
                       type="password"
                       autoComplete="current-password"
-                      placeholder="Enter the demo password"
+                      placeholder="Enter your password"
                       value={password}
                       onChange={(event) => setPassword(event.target.value)}
                     />
@@ -145,17 +217,14 @@ function LoginScreen({
                   ) : null}
 
                   <div className="flex flex-col gap-3 sm:flex-row">
-                    <Button type="submit" className="flex-1">
-                      Enter admin
-                    </Button>
-                    <Button type="button" variant="outline" className="flex-1" onClick={() => setPassword("savannah2026") }>
-                      Fill demo password
+                    <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                      {isSubmitting ? "Signing in..." : "Enter admin"}
                     </Button>
                   </div>
                 </form>
 
                 <p className="text-xs leading-5 text-muted-foreground">
-                  Tip: the live site remains public. This admin screen is a design mock only and shares no state with any production service.
+                  The public site remains account-free. Only the private admin area requires sign-in.
                 </p>
               </div>
             </div>
@@ -166,7 +235,33 @@ function LoginScreen({
   )
 }
 
-function Dashboard({ onLogout }: { onLogout: () => void }) {
+function LoadingScreen() {
+  return (
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(107,87,73,0.12),_transparent_36%),linear-gradient(180deg,_#f8f4ed_0%,_#f2e9dc_100%)] px-4 py-8 text-[var(--navy)] sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl items-center justify-center">
+        <Card className="w-full max-w-xl border-[rgba(34,49,63,0.12)] bg-[rgba(255,252,247,0.84)] shadow-[0_30px_80px_rgba(61,42,32,0.12)] backdrop-blur">
+          <CardContent className="flex flex-col items-center gap-4 px-8 py-14 text-center">
+            <ShieldCheck className="size-10 text-[var(--sage)]" />
+            <div className="space-y-2">
+              <h1 className="font-serif text-3xl text-[var(--navy)]">Checking admin access</h1>
+              <p className="text-sm leading-6 text-muted-foreground">
+                Verifying your session before loading the dashboard.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </main>
+  )
+}
+
+function Dashboard({
+  onLogout,
+  userEmail,
+}: {
+  onLogout: () => Promise<void>
+  userEmail: string | null
+}) {
   const [rsvps, setRsvps] = useState<RsvpRecord[]>(() => mockRsvps)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all")
@@ -284,6 +379,11 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
                 Track attendance, revise guest details, and export the local RSVP mock data set for planning review.
               </p>
+              {userEmail ? (
+                <p className="text-xs uppercase tracking-[0.18em] text-[var(--burgundy)]">
+                  Signed in as {userEmail}
+                </p>
+              ) : null}
             </div>
 
             <div className="flex flex-wrap gap-3">
@@ -461,6 +561,32 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       </Dialog>
     </main>
   )
+}
+
+function getLoginErrorMessage(error: unknown) {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    typeof error.code === "string"
+  ) {
+    switch (error.code) {
+      case "auth/invalid-email":
+        return "Please enter a valid email address."
+      case "auth/user-disabled":
+        return "This admin account has been disabled."
+      case "auth/user-not-found":
+      case "auth/wrong-password":
+      case "auth/invalid-credential":
+        return "That email or password was not recognized."
+      case "auth/too-many-requests":
+        return "Too many sign-in attempts. Please wait a moment and try again."
+      default:
+        return "We couldn't sign you in right now. Please try again."
+    }
+  }
+
+  return "We couldn't sign you in right now. Please try again."
 }
 
 function RsvpDetailsDialog({
