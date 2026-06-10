@@ -23,6 +23,7 @@ import {
   type Auth,
   type User,
 } from "firebase/auth"
+import { collection, onSnapshot, query, type Timestamp } from "firebase/firestore"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -39,8 +40,10 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { db } from "@/lib/firebase"
 import { cn } from "@/lib/utils"
-import { mockRsvps, mealOptions, type MealChoice, type RsvpRecord, type RsvpStatus } from "@/lib/rsvp-data"
+import { mealOptions, type MealChoice, type RsvpRecord, type RsvpStatus } from "@/lib/rsvp-data"
 import { wedding } from "@/lib/wedding-data"
 
 type StatusFilter = "all" | RsvpStatus
@@ -59,6 +62,19 @@ const statusBadgeVariant: Record<RsvpStatus, "default" | "outline" | "secondary"
   pending: "secondary",
 }
 
+type FirestoreRsvpDoc = {
+  fullName?: string
+  email?: string
+  attendanceStatus?: string
+  partySize?: number
+  plusOneName?: string
+  mealChoice?: string
+  dietaryRestrictions?: string
+  songRequest?: string
+  notes?: string
+  submittedAt?: Timestamp | Date | string | { seconds?: number; nanoseconds?: number } | null
+}
+
 export function AdminDashboard() {
   const [user, setUser] = useState<User | null>(null)
   const [firebaseAuth, setFirebaseAuth] = useState<Auth | null>(null)
@@ -67,7 +83,7 @@ export function AdminDashboard() {
 
   useEffect(() => {
     let isMounted = true
-    let unsubscribe = () => undefined
+    let unsubscribe: () => void = () => {}
 
     async function loadAuth() {
       const { auth } = await import("@/lib/firebase")
@@ -169,8 +185,8 @@ function LoginScreen({
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-3">
-                  <InfoChip icon={Users} label="Guests" value={`${mockRsvps.length} RSVPs in the prototype`} />
-                  <InfoChip icon={Sparkles} label="Workflow" value="Edit, remove, export, and filter locally" />
+                  <InfoChip icon={Users} label="Guests" value="Live Firestore RSVP feed" />
+                  <InfoChip icon={Sparkles} label="Workflow" value="Search, review, and export current responses" />
                   <InfoChip icon={Clock3} label="Access" value="Firebase email/password login" />
                 </div>
               </div>
@@ -262,13 +278,41 @@ function Dashboard({
   onLogout: () => Promise<void>
   userEmail: string | null
 }) {
-  const [rsvps, setRsvps] = useState<RsvpRecord[]>(() => mockRsvps)
+  const [rsvps, setRsvps] = useState<RsvpRecord[]>([])
+  const [isLoadingRsvps, setIsLoadingRsvps] = useState(true)
+  const [rsvpError, setRsvpError] = useState("")
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all")
   const [dietaryFilter, setDietaryFilter] = useState<DietaryFilter>("all")
   const [plusOneFilter, setPlusOneFilter] = useState<PlusOneFilter>("all")
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [deleteCandidate, setDeleteCandidate] = useState<RsvpRecord | null>(null)
+
+  useEffect(() => {
+    setIsLoadingRsvps(true)
+    setRsvpError("")
+
+    const rsvpsQuery = query(collection(db, "rsvps"))
+
+    const unsubscribe = onSnapshot(
+      rsvpsQuery,
+      (snapshot) => {
+        const nextRsvps = snapshot.docs
+          .map((doc) => mapFirestoreRsvp(doc.id, doc.data() as FirestoreRsvpDoc))
+          .sort((left, right) => compareSubmittedAt(right.submittedAt, left.submittedAt))
+
+        setRsvps(nextRsvps)
+        setIsLoadingRsvps(false)
+      },
+      (error) => {
+        console.error("Failed to load RSVP data:", error)
+        setRsvpError("We couldn't load RSVP responses from Firestore right now. Please refresh and try again.")
+        setIsLoadingRsvps(false)
+      },
+    )
+
+    return unsubscribe
+  }, [])
 
   const filteredRsvps = useMemo(() => {
     const query = search.trim().toLowerCase()
@@ -311,19 +355,6 @@ function Dashboard({
       count: rsvps.filter((record) => record.mealChoice === meal).length,
     }))
   }, [rsvps])
-
-  function handleSave(updated: RsvpRecord) {
-    setRsvps((current) => current.map((record) => (record.id === updated.id ? updated : record)))
-    setSelectedId(updated.id)
-  }
-
-  function handleDelete(id: string) {
-    setRsvps((current) => current.filter((record) => record.id !== id))
-    setDeleteCandidate(null)
-    if (selectedId === id) {
-      setSelectedId(null)
-    }
-  }
 
   function handleExport() {
     const headers = [
@@ -374,10 +405,10 @@ function Dashboard({
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[var(--burgundy)]">Private dashboard</p>
               <div className="flex flex-wrap items-center gap-3">
                 <h1 className="font-serif text-3xl text-[var(--navy)] sm:text-4xl">RSVP Management</h1>
-                <Badge className="rounded-full bg-[var(--sage)] text-white hover:bg-[var(--sage)]">Demo mode</Badge>
+                <Badge className="rounded-full bg-[var(--sage)] text-white hover:bg-[var(--sage)]">Live Firestore</Badge>
               </div>
               <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-                Track attendance, revise guest details, and export the local RSVP mock data set for planning review.
+                Track attendance, review guest responses, and export the current Firestore RSVP list for planning review.
               </p>
               {userEmail ? (
                 <p className="text-xs uppercase tracking-[0.18em] text-[var(--burgundy)]">
@@ -399,11 +430,18 @@ function Dashboard({
           </CardContent>
         </Card>
 
+        {rsvpError ? (
+          <Alert className="border-[rgba(128,63,56,0.2)] bg-[rgba(128,63,56,0.08)] text-[var(--burgundy)]">
+            <AlertTitle>Unable to load RSVPs</AlertTitle>
+            <AlertDescription>{rsvpError}</AlertDescription>
+          </Alert>
+        ) : null}
+
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <SummaryCard icon={Users} label="Total RSVPs" value={rsvps.length} accent="text-[var(--navy)]" />
           <SummaryCard icon={UserCheck} label="Attending" value={counts.attending} accent="text-[var(--sage)]" />
           <SummaryCard icon={UserX} label="Declined" value={counts.declined} accent="text-[var(--burgundy)]" />
-          <SummaryCard icon={Sparkles} label="Plus ones" value={counts.plusOnes} accent="text-[var(--gold)]" />
+          <SummaryCard icon={Sparkles} label="Plus ones" value={counts.plusOnes} accent="text-[var(--accent-foreground)]" />
         </div>
 
         <div className="grid gap-4 xl:grid-cols-[1.6fr_1fr]">
@@ -412,10 +450,10 @@ function Dashboard({
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <CardTitle className="font-serif text-2xl text-[var(--navy)]">Guest list</CardTitle>
-                  <CardDescription>Search, filter, and edit RSVP records directly in the browser.</CardDescription>
+                  <CardDescription>Search, filter, and review RSVP records synced from Firestore.</CardDescription>
                 </div>
                 <Badge variant="outline" className="rounded-full border-[rgba(34,49,63,0.15)] px-3 py-1 text-[0.68rem] uppercase tracking-[0.2em] text-muted-foreground">
-                  {filteredRsvps.length} visible
+                  {isLoadingRsvps ? "Loading..." : `${filteredRsvps.length} visible`}
                 </Badge>
               </div>
 
@@ -449,7 +487,9 @@ function Dashboard({
             </CardHeader>
 
             <CardContent className="space-y-4">
-              {filteredRsvps.length ? (
+              {isLoadingRsvps ? (
+                <LoadingPanel />
+              ) : filteredRsvps.length ? (
                 <div className="overflow-hidden rounded-2xl border border-[rgba(34,49,63,0.08)]">
                   <Table>
                     <TableHeader className="bg-[rgba(34,49,63,0.04)]">
@@ -482,7 +522,7 @@ function Dashboard({
                           <TableCell className="text-sm text-muted-foreground">{record.submittedAt}</TableCell>
                           <TableCell>
                             <div className="flex justify-end gap-2">
-                              <Button variant="ghost" size="icon" onClick={() => setSelectedId(record.id)} aria-label={`Edit ${record.name}`}>
+                              <Button variant="ghost" size="icon" onClick={() => setSelectedId(record.id)} aria-label={`View ${record.name}`}>
                                 <PencilLine className="size-4" />
                               </Button>
                               <Button variant="ghost" size="icon" onClick={() => setDeleteCandidate(record)} aria-label={`Delete ${record.name}`}>
@@ -517,17 +557,17 @@ function Dashboard({
             <Card className="border-[rgba(34,49,63,0.12)] bg-[rgba(255,252,247,0.82)]">
               <CardHeader>
                 <CardTitle className="font-serif text-2xl text-[var(--navy)]">Dashboard notes</CardTitle>
-                <CardDescription>Prototype reminders for the wedding planning team.</CardDescription>
+                <CardDescription>Current scope notes for the wedding planning team.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 text-sm leading-6 text-muted-foreground">
                 <p>
-                  All edits stay in local browser state. Refreshing the page restores the seeded RSVP list.
+                  This phase reads live RSVP submissions from Firestore in real time while keeping admin auth private.
                 </p>
                 <Separator />
                 <ul className="space-y-2">
-                  <li>Use the modal to update RSVP details or add planning notes.</li>
-                  <li>Delete confirmations remove the selected row from the mock table only.</li>
-                  <li>CSV export downloads the current local data set without any server call.</li>
+                  <li>The details modal is available for review, but editing is intentionally not connected yet.</li>
+                  <li>The delete confirmation remains in place, but deletion is disabled until write actions are wired safely.</li>
+                  <li>CSV export downloads the currently loaded Firestore data in the browser.</li>
                 </ul>
               </CardContent>
             </Card>
@@ -538,7 +578,6 @@ function Dashboard({
       <RsvpDetailsDialog
         record={selectedRecord}
         onClose={() => setSelectedId(null)}
-        onSave={handleSave}
       />
 
       <Dialog open={Boolean(deleteCandidate)} onOpenChange={(open) => !open && setDeleteCandidate(null)}>
@@ -546,15 +585,15 @@ function Dashboard({
           <DialogHeader>
             <DialogTitle>Delete RSVP</DialogTitle>
             <DialogDescription>
-              Are you sure you want to remove this RSVP? This will only affect the local demo data.
+              Delete is not connected in this phase yet. This confirmation stays in place so the admin flow can keep its shape safely.
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4 flex justify-end gap-2">
             <Button variant="outline" onClick={() => setDeleteCandidate(null)}>
-              Cancel
+              Close
             </Button>
-            <Button variant="destructive" onClick={() => deleteCandidate && handleDelete(deleteCandidate.id)}>
-              Delete
+            <Button variant="destructive" disabled>
+              Delete unavailable
             </Button>
           </div>
         </DialogContent>
@@ -592,15 +631,13 @@ function getLoginErrorMessage(error: unknown) {
 function RsvpDetailsDialog({
   record,
   onClose,
-  onSave,
 }: {
   record: RsvpRecord | null
   onClose: () => void
-  onSave: (record: RsvpRecord) => void
 }) {
   const [form, setForm] = useState<RsvpRecord | null>(record)
 
-  useMemo(() => {
+  useEffect(() => {
     setForm(record ? { ...record } : null)
   }, [record])
 
@@ -616,22 +653,23 @@ function RsvpDetailsDialog({
     <Dialog open={Boolean(record)} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="font-serif text-2xl text-[var(--navy)]">Edit RSVP</DialogTitle>
-          <DialogDescription>Adjust guest details in the local prototype and save the updated mock record.</DialogDescription>
+          <DialogTitle className="font-serif text-2xl text-[var(--navy)]">RSVP Details</DialogTitle>
+          <DialogDescription>Review the Firestore RSVP data for this guest. Editing is not connected in this phase.</DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-2 sm:grid-cols-2">
           <Field label="Guest name">
-            <Input value={form.name} onChange={(event) => updateField("name", event.target.value)} />
+            <Input value={form.name} onChange={(event) => updateField("name", event.target.value)} disabled />
           </Field>
           <Field label="Email address">
-            <Input value={form.email} onChange={(event) => updateField("email", event.target.value)} />
+            <Input value={form.email} onChange={(event) => updateField("email", event.target.value)} disabled />
           </Field>
           <Field label="Attendance status">
             <select
-              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:pointer-events-none disabled:opacity-100"
               value={form.attendanceStatus}
               onChange={(event) => updateField("attendanceStatus", event.target.value as RsvpStatus)}
+              disabled
             >
               <option value="attending">Attending</option>
               <option value="pending">Pending</option>
@@ -644,17 +682,20 @@ function RsvpDetailsDialog({
               min={1}
               value={form.partySize}
               onChange={(event) => updateField("partySize", Number(event.target.value || 0))}
+              disabled
             />
           </Field>
           <Field label="Plus one name">
-            <Input value={form.plusOneName} onChange={(event) => updateField("plusOneName", event.target.value)} />
+            <Input value={form.plusOneName} onChange={(event) => updateField("plusOneName", event.target.value)} disabled />
           </Field>
           <Field label="Meal choice">
             <select
-              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:pointer-events-none disabled:opacity-100"
               value={form.mealChoice}
               onChange={(event) => updateField("mealChoice", event.target.value as MealChoice)}
+              disabled
             >
+              <option value="">No selection</option>
               {mealOptions.map((meal) => (
                 <option key={meal} value={meal}>
                   {meal}
@@ -667,28 +708,129 @@ function RsvpDetailsDialog({
               value={form.dietaryRestrictions}
               onChange={(event) => updateField("dietaryRestrictions", event.target.value)}
               placeholder="Any allergies or dietary notes"
+              disabled
             />
           </Field>
           <Field label="Song request" className="sm:col-span-2">
-            <Input value={form.songRequest} onChange={(event) => updateField("songRequest", event.target.value)} />
+            <Input value={form.songRequest} onChange={(event) => updateField("songRequest", event.target.value)} disabled />
           </Field>
           <Field label="Notes" className="sm:col-span-2">
             <Textarea
               value={form.notes}
               onChange={(event) => updateField("notes", event.target.value)}
               rows={4}
+              disabled
             />
+          </Field>
+          <Field label="Firestore document ID" className="sm:col-span-2">
+            <Input value={form.id} disabled />
           </Field>
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={() => onSave(form)}>Save changes</Button>
+          <Button onClick={onClose}>Close</Button>
         </div>
       </DialogContent>
     </Dialog>
+  )
+}
+
+function mapFirestoreRsvp(id: string, data: FirestoreRsvpDoc): RsvpRecord {
+  const attendanceStatus = toRsvpStatus(data.attendanceStatus)
+  const mealChoice = toMealChoice(data.mealChoice)
+  const partySize = typeof data.partySize === "number" ? data.partySize : attendanceStatus === "attending" ? 1 : 0
+
+  return {
+    id,
+    name: typeof data.fullName === "string" ? data.fullName : "Unnamed Guest",
+    email: typeof data.email === "string" ? data.email : "",
+    attendanceStatus,
+    partySize,
+    plusOneName: typeof data.plusOneName === "string" ? data.plusOneName : "",
+    mealChoice,
+    dietaryRestrictions: typeof data.dietaryRestrictions === "string" ? data.dietaryRestrictions : "",
+    songRequest: typeof data.songRequest === "string" ? data.songRequest : "",
+    notes: typeof data.notes === "string" ? data.notes : "",
+    submittedAt: formatSubmittedAt(data.submittedAt),
+  }
+}
+
+function toRsvpStatus(value: string | undefined): RsvpStatus {
+  if (value === "attending" || value === "declined" || value === "pending") {
+    return value
+  }
+
+  return "pending"
+}
+
+function toMealChoice(value: string | undefined): MealChoice {
+  if (value === "Beef" || value === "Chicken" || value === "Fish" || value === "Vegetarian") {
+    return value
+  }
+
+  return ""
+}
+
+function formatSubmittedAt(value: FirestoreRsvpDoc["submittedAt"]) {
+  if (!value) {
+    return ""
+  }
+
+  if (typeof value === "string") {
+    return value
+  }
+
+  if (value instanceof Date) {
+    return formatDate(value)
+  }
+
+  if ("toDate" in value && typeof value.toDate === "function") {
+    return formatDate(value.toDate())
+  }
+
+  if ("seconds" in value && typeof value.seconds === "number") {
+    return formatDate(new Date(value.seconds * 1000))
+  }
+
+  return ""
+}
+
+function formatDate(date: Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date)
+}
+
+function compareSubmittedAt(left: string, right: string) {
+  const leftTime = Date.parse(left)
+  const rightTime = Date.parse(right)
+
+  if (Number.isNaN(leftTime) && Number.isNaN(rightTime)) {
+    return 0
+  }
+
+  if (Number.isNaN(leftTime)) {
+    return -1
+  }
+
+  if (Number.isNaN(rightTime)) {
+    return 1
+  }
+
+  return leftTime - rightTime
+}
+
+function LoadingPanel() {
+  return (
+    <div className="flex min-h-[22rem] flex-col items-center justify-center rounded-3xl border border-dashed border-[rgba(34,49,63,0.14)] bg-[rgba(255,252,247,0.66)] px-6 py-10 text-center">
+      <Clock3 className="size-10 text-[var(--sage)]" />
+      <h3 className="mt-4 font-serif text-2xl text-[var(--navy)]">Loading RSVPs</h3>
+      <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+        Pulling the latest guest responses from Firestore.
+      </p>
+    </div>
   )
 }
 
