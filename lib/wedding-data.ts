@@ -190,11 +190,11 @@ export type Hotel = {
 export const hotelBlock: Hotel = {
   id: "desoto-hotel",
   name: "The DeSoto",
-  rate: "From $279 / night",
+  rate: "From $213 / night",
   distance: "Reception venue · Historic District",
   note: "Our only room block will be at The DeSoto, where the reception will also be held. Stay where the celebration happens and enjoy the easiest walk home at the end of the evening.",
-  code: "TBD",
-  url: "https://www.thedesotosavannah.com/",
+  code: "2611HAVMOR",
+  url: "https://be.synxis.com/?Hotel=76327&Chain=25795&arrive=2026-11-13&depart=2026-11-15&adult=1&child=0&group=2611HAVMOR",
   phone: "(912) 232-9000",
 }
 
