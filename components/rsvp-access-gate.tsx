@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react"
 import { LockKeyhole } from "lucide-react"
+import { usePathname } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -11,16 +12,23 @@ const RSVP_PASSWORD = "Morgan&Brendan2026"
 const RSVP_ACCESS_KEY = "wedding-rsvp-access"
 
 export function RsvpAccessGate({ children }: { children: ReactNode }) {
+  const pathname = usePathname()
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [isUnlocked, setIsUnlocked] = useState(false)
   const [isCheckingAccess, setIsCheckingAccess] = useState(true)
 
   useEffect(() => {
+    if (pathname?.startsWith("/admin")) {
+      setIsUnlocked(true)
+      setIsCheckingAccess(false)
+      return
+    }
+
     const hasAccess = window.sessionStorage.getItem(RSVP_ACCESS_KEY) === "granted"
     setIsUnlocked(hasAccess)
     setIsCheckingAccess(false)
-  }, [])
+  }, [pathname])
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
