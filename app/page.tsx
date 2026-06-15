@@ -2,6 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { CalendarHeart, ChevronDown, Church, GlassWater, MapPin, Plane } from "lucide-react"
 
+import { RsvpAccessGate } from "@/components/rsvp-access-gate"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Countdown } from "@/components/countdown"
@@ -37,7 +38,7 @@ const previewCards = [
 
 export default function HomePage() {
   return (
-    <>
+    <RsvpAccessGate>
       {/* Hero */}
       <section className="relative flex min-h-[88vh] items-center justify-center overflow-hidden">
         <Image
@@ -165,6 +166,6 @@ export default function HomePage() {
           ))}
         </div>
       </section>
-    </>
+    </RsvpAccessGate>
   )
 }
