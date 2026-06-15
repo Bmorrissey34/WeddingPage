@@ -41,7 +41,7 @@ export default function HomePage() {
       {/* Hero */}
       <section className="relative flex min-h-[88vh] items-center justify-center overflow-hidden">
         <Image
-          src="/images/hero-savannah.png"
+          src="/images/hero-savannah.jpg"
           alt="A historic Savannah street canopied by oak trees draped in Spanish moss"
           fill
           priority

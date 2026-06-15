@@ -54,7 +54,7 @@ export default function TravelPage() {
                 value="transport"
                 icon={Bus}
                 title="Transportation"
-                body="A shuttle will run between the ceremony and reception venues. Rideshare services operate throughout Savannah, and the downtown area is wonderfully walkable. We recommend planning ahead on the evening of the wedding."
+                body="A trolley will run between The DeSoto and Trinity Methodist Church to and from the ceremony. Rideshare services operate throughout Savannah, and the downtown area is wonderfully walkable. We recommend planning ahead on the evening of the wedding."
               />
               <LogisticsItem
                 value="parking"

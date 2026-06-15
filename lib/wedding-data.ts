@@ -13,7 +13,7 @@ export const wedding = {
     dateShort: "11 . 14 . 2026",
   city: "Savannah, Georgia",
   hashtag: "#MeetUsInTheMoss",
-  rsvpDeadline: "April 1, 2026",
+  rsvpDeadline: "September 1, 2026",
 }
 
 export type NavLink = { label: string; href: string }
@@ -48,7 +48,7 @@ export const schedule: ScheduleEvent[] = [
     time: "7:00 PM – 10:00 PM",
     location: "Location to be announced",
     address: "Savannah, Georgia",
-    attire: "Cocktail attire",
+    attire: "Black tie optional",
     notes:
       "Join us the evening before to greet friends and family arriving from near and far. Details coming soon.",
     status: "tbd",
@@ -57,37 +57,37 @@ export const schedule: ScheduleEvent[] = [
     id: "ceremony",
     title: "The Ceremony",
     date: "Saturday, November 14, 2026",
-    time: "4:30 PM",
+    time: "3:00 PM",
     location: "Trinity Methodist Church",
     address: "225 W President St, Savannah, GA 31401",
-    attire: "Black-tie",
+    attire: "Black tie optional",
     notes:
-      "We invite you to be seated by 4:15 PM. The ceremony will be followed by a brief reception of well-wishes.",
+      "We invite you to be seated by 2:45 PM. The ceremony will be followed by a brief reception of well-wishes.",
+    status: "confirmed",
+  },
+  {
+    id: "cocktail-hour",
+    title: "Cocktail Hour",
+    date: "Saturday, November 14, 2026",
+    time: "4:00 PM – 5:00 PM",
+    location: "The DeSoto",
+    address: "15 E Liberty St, Savannah, GA 31401",
+    attire: "Black tie optional",
+    notes:
+      "Join us for cocktails and conversation before we head into dinner and dancing in the ballroom.",
     status: "confirmed",
   },
   {
     id: "reception",
     title: "The Reception",
     date: "Saturday, November 14, 2026",
-    time: "6:00 PM – 11:00 PM",
+    time: "5:00 PM – 11:00 PM",
     location: "The DeSoto",
     address: "15 E Liberty St, Savannah, GA 31401",
-    attire: "Black-tie",
+    attire: "Black tie optional",
     notes:
-      "An evening of dinner, dancing, and celebration in the grand ballroom. Cocktails begin at 6:00 PM.",
+      "An evening of dinner, dancing, and celebration in the grand ballroom.",
     status: "confirmed",
-  },
-  {
-    id: "brunch",
-    title: "Farewell Brunch",
-    date: "Sunday, November 15, 2026",
-    time: "10:00 AM – 12:00 PM",
-    location: "Location to be announced",
-    address: "Savannah, Georgia",
-    attire: "Casual",
-    notes:
-      "Before you depart, share one last meal with us. An optional send-off for all who are able to stay.",
-    status: "tbd",
   },
 ]
 
@@ -107,23 +107,23 @@ export const venues: Venue[] = [
     id: "church",
     name: "Trinity Methodist Church",
     role: "Ceremony",
-    image: "/images/trinity-church.png",
+    image: "images/Trinity_Methodist_Church_-_August_9,_2020.jpg",
     address: "225 W President St, Savannah, GA 31401",
     parking:
       "Street parking is available around Telfair Square. Public garages are a short walk away on Bryan Street and Liberty Street.",
     transportation:
-      "The church is centrally located in the Historic District, an easy walk or short ride from most downtown hotels.",
+      "A trolley will run between The DeSoto and Trinity Methodist Church before and after the ceremony for guests who would like transportation.",
   },
   {
     id: "desoto",
     name: "The DeSoto",
     role: "Reception",
-    image: "/images/desoto-ballroom.png",
+    image: "images/hotel-desoto-savannah.jpg",
     address: "15 E Liberty St, Savannah, GA 31401",
     parking:
       "Valet parking is available at the hotel entrance on Liberty Street. Self-parking is offered in the adjacent garage.",
     transportation:
-      "Shuttle service will run between Trinity Methodist Church and The DeSoto following the ceremony.",
+      "A trolley will run between The DeSoto and Trinity Methodist Church to and from the ceremony.",
   },
   {
     id: "welcome",
@@ -165,14 +165,14 @@ export const storyMoments: StoryMoment[] = [
     year: "2024",
     title: "A Hike and a Drone",
     body: "On April 26, 2024, their story took its next step at Rainbow Falls in Chattanooga. Brendan planned a proposal on a rock beneath the falls and filmed the moment with a drone, since it was no small task to find a photographer willing to hike two miles downhill through the forest. It was a joyful, unforgettable day, and of course, the answer was yes.",
-    image: null,
+    image: "/images/IMG_3449.JPG",
   },
   {
     id: "forever",
     year: "2026",
     title: "See You in Savannah",
     body: "Now, with so many treasured memories tied to that city, Morgan and Brendan are overjoyed to celebrate their wedding in Savannah on November 14, 2026. They cannot wait to gather with the people they love most and share the place that has meant so much to them from the very beginning.",
-    image: "/images/engagement-1.png",
+    image: "/images/morgan&brendanengaged-7984.jpg",
   },
 ]
 
@@ -255,7 +255,7 @@ export const faqs: Faq[] = [
   {
     question: "What is the dress code?",
     answer:
-      "Both the ceremony and reception are black-tie. We kindly ask gentlemen to wear tuxedos and ladies to wear floor-length gowns. The welcome party is cocktail attire.",
+      "The dress code for the weekend is black tie optional. Tuxedos and formal gowns are welcome, and a dark suit or other formal evening attire is equally appropriate.",
   },
   {
     question: "Where should I park?",
@@ -265,7 +265,7 @@ export const faqs: Faq[] = [
   {
     question: "Will transportation be provided?",
     answer:
-      "Yes. A shuttle will run between Trinity Methodist Church and The DeSoto following the ceremony. Additional transportation details will be shared closer to the date.",
+      "Yes. A trolley will run between The DeSoto and Trinity Methodist Church to and from the ceremony. Additional transportation details will be shared closer to the date.",
   },
   {
     question: "Are children welcome?",
@@ -280,7 +280,7 @@ export const faqs: Faq[] = [
   {
     question: "When should I RSVP by?",
     answer:
-      "Please respond no later than April 1, 2026. We kindly ask for your reply by this date so we may finalize arrangements with our venues.",
+      "Please respond no later than September 1, 2026. We kindly ask for your reply by this date so we may finalize arrangements with our venues.",
   },
   {
     question: "Can I change my RSVP after submitting?",
@@ -305,12 +305,12 @@ export const faqs: Faq[] = [
   {
     question: "What time does the ceremony begin?",
     answer:
-      "The ceremony begins promptly at 4:30 PM at Trinity Methodist Church. Please plan to be seated by 4:15 PM.",
+      "The ceremony begins promptly at 3:00 PM at Trinity Methodist Church. Please plan to be seated by 2:45 PM.",
   },
   {
     question: "What time does the reception end?",
     answer:
-      "The reception at The DeSoto will conclude at 11:00 PM, with a farewell send-off to follow.",
+      "The reception at The DeSoto will conclude at 11:00 PM.",
   },
   {
     question: "What is the weather like in Savannah in November?",

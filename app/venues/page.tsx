@@ -35,12 +35,12 @@ export default function VenuesPage() {
                     {/* Image / placeholder */}
                     <div className={index % 2 === 1 ? "md:order-2" : ""}>
                       {venue.image ? (
-                        <div className="relative aspect-[4/3] w-full md:h-full">
+                        <div className="relative aspect-[5/4] w-full overflow-hidden bg-[rgba(255,252,247,0.92)] md:h-full">
                           <Image
                             src={venue.image}
                             alt={venue.name}
                             fill
-                            className="object-cover"
+                            className="object-contain p-3 sm:p-4"
                           />
                         </div>
                       ) : (
