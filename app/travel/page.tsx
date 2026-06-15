@@ -90,8 +90,8 @@ export default function TravelPage() {
                 {hotelBlock.note}
               </p>
               {hotelBlock.phone ? (
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-serif tracking-[0.02em] text-foreground">Phone:</span>{" "}
+                <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-base text-muted-foreground sm:text-lg">
+                  <span className="font-serif tracking-[0.02em] text-foreground">Phone:</span>
                   <span className="font-serif tracking-[0.02em] text-foreground">{hotelBlock.phone}</span>
                 </p>
               ) : null}
@@ -154,8 +154,8 @@ export default function TravelPage() {
                   <h4 className="font-serif text-lg text-foreground">{hotel.name}</h4>
                   <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{hotel.note}</p>
                   {hotel.phone ? (
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      <span className="font-serif tracking-[0.02em] text-foreground">Phone:</span>{" "}
+                    <p className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-base text-muted-foreground sm:text-lg">
+                      <span className="font-serif tracking-[0.02em] text-foreground">Phone:</span>
                       <span className="font-serif tracking-[0.02em] text-foreground">{hotel.phone}</span>
                     </p>
                   ) : null}
