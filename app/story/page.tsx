@@ -30,6 +30,8 @@ export default function StoryPage() {
           <div className="flex flex-col gap-16">
             {storyMoments.map((moment, index) => {
               const flip = index % 2 === 1
+              const mediaFrameClassName =
+                moment.id === "forever" ? "aspect-[4/3] md:aspect-[3/4]" : "aspect-[4/3]"
               return (
                 <div
                   key={moment.id}
@@ -68,7 +70,12 @@ export default function StoryPage() {
                         title={`${moment.title} - ${wedding.brideFirst} and ${wedding.groomFirst}`}
                       />
                     ) : moment.image ? (
-                      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-border">
+                      <div
+                        className={cn(
+                          "relative w-full overflow-hidden rounded-lg border border-border",
+                          mediaFrameClassName
+                        )}
+                      >
                         <Image
                           src={moment.image}
                           alt={`${moment.title} - ${wedding.brideFirst} and ${wedding.groomFirst}`}
