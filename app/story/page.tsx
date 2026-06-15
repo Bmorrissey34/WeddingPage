@@ -1,6 +1,7 @@
 import Image from "next/image"
 
 import { PageHeader } from "@/components/section-heading"
+import { StoryVideo } from "@/components/story-video"
 import { cn } from "@/lib/utils"
 import { storyMoments, wedding } from "@/lib/wedding-data"
 
@@ -58,9 +59,15 @@ export default function StoryPage() {
                     </p>
                   </div>
 
-                  {/* Image */}
+                  {/* Media */}
                   <div className={cn(flip ? "md:order-1 md:pr-12" : "md:pl-12")}>
-                    {moment.image ? (
+                    {moment.video && moment.image ? (
+                      <StoryVideo
+                        src={moment.video}
+                        poster={moment.image}
+                        title={`${moment.title} - ${wedding.brideFirst} and ${wedding.groomFirst}`}
+                      />
+                    ) : moment.image ? (
                       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-border">
                         <Image
                           src={moment.image}

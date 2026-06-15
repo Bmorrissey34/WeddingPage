@@ -143,6 +143,7 @@ export type StoryMoment = {
   title: string
   body: string
   image: string | null
+  video?: string | null
 }
 
 export const storyMoments: StoryMoment[] = [
@@ -166,6 +167,7 @@ export const storyMoments: StoryMoment[] = [
     title: "A Hike and a Drone",
     body: "On April 26, 2024, their story took its next step at Rainbow Falls in Chattanooga. Brendan planned a proposal on a rock beneath the falls and filmed the moment with a drone, since it was no small task to find a photographer willing to hike two miles downhill through the forest. It was a joyful, unforgettable day, and of course, the answer was yes.",
     image: "/images/IMG_3449.JPG",
+    video: "/video/82A91697-DC2D-4685-B2A3-F3494136ECEE.MP4",
   },
   {
     id: "forever",
