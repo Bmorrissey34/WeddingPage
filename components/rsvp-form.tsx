@@ -25,6 +25,7 @@ type FormState = {
   partySize: PartySize
   plusOneName: string
   mealChoice: Meal | ""
+  plusOneMealChoice: Meal | ""
   dietaryRestrictions: string
   songRequest: string
   notes: string
@@ -37,6 +38,7 @@ const initialState: FormState = {
   partySize: "",
   plusOneName: "",
   mealChoice: "",
+  plusOneMealChoice: "",
   dietaryRestrictions: "",
   songRequest: "",
   notes: "",
@@ -67,6 +69,7 @@ export function RsvpForm() {
       delete next.partySize
       delete next.plusOneName
       delete next.mealChoice
+      delete next.plusOneMealChoice
       return next
     })
 
@@ -76,6 +79,7 @@ export function RsvpForm() {
       partySize: value === "attending" ? prev.partySize : "",
       plusOneName: value === "attending" ? prev.plusOneName : "",
       mealChoice: value === "attending" ? prev.mealChoice : "",
+      plusOneMealChoice: value === "attending" ? prev.plusOneMealChoice : "",
       dietaryRestrictions: value === "attending" ? prev.dietaryRestrictions : "",
       songRequest: value === "attending" ? prev.songRequest : "",
     }))
@@ -87,6 +91,7 @@ export function RsvpForm() {
       const next = { ...prev }
       delete next.partySize
       delete next.plusOneName
+      delete next.plusOneMealChoice
       return next
     })
 
@@ -94,6 +99,7 @@ export function RsvpForm() {
       ...prev,
       partySize: value,
       plusOneName: value === 2 ? prev.plusOneName : "",
+      plusOneMealChoice: value === 2 ? prev.plusOneMealChoice : "",
     }))
   }
 
@@ -121,6 +127,9 @@ export function RsvpForm() {
     if (!form.mealChoice) next.mealChoice = "Please choose a meal."
     if (form.partySize === 2 && !form.plusOneName.trim()) {
       next.plusOneName = "Please enter your guest's name."
+    }
+    if (form.partySize === 2 && !form.plusOneMealChoice) {
+      next.plusOneMealChoice = "Please choose a meal for your guest."
     }
 
     setErrors(next)
@@ -174,6 +183,7 @@ export function RsvpForm() {
         partySize,
         plusOneName: partySize > 1 ? form.plusOneName.trim() : "",
         mealChoice: isAttending ? form.mealChoice : "",
+        plusOneMealChoice: isAttending && partySize > 1 ? form.plusOneMealChoice : "",
         dietaryRestrictions: isAttending ? form.dietaryRestrictions.trim() : "",
         songRequest: isAttending ? form.songRequest.trim() : "",
         notes: form.notes.trim(),
@@ -317,6 +327,11 @@ export function RsvpForm() {
                 onChange={(m) => update("mealChoice", m)}
                 disabled={isSubmitting}
               />
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                We are currently offering beef or chicken. If you need dietary accommodations,
+                please note them below. Special requests, including vegetarian meals, will be handled
+                with the kitchen on a case-by-case basis.
+              </p>
             </Field>
 
             {needsPlusOne ? (
@@ -331,15 +346,22 @@ export function RsvpForm() {
                     disabled={isSubmitting}
                   />
                 </Field>
+                <Field label="Guest's Meal Selection" error={errors.plusOneMealChoice}>
+                  <MealPicker
+                    value={form.plusOneMealChoice}
+                    onChange={(meal) => update("plusOneMealChoice", meal)}
+                    disabled={isSubmitting}
+                  />
+                </Field>
               </div>
             ) : null}
 
-            <Field label="Dietary Restrictions (optional)" htmlFor="dietaryRestrictions">
+            <Field label="Dietary Restrictions Or Accommodations (optional)" htmlFor="dietaryRestrictions">
               <Input
                 id="dietaryRestrictions"
                 value={form.dietaryRestrictions}
                 onChange={(e) => update("dietaryRestrictions", e.target.value)}
-                placeholder="Allergies, preferences, etc."
+                placeholder="Allergies, restrictions, or accommodation requests"
                 disabled={isSubmitting}
               />
             </Field>

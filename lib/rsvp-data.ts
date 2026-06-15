@@ -3,7 +3,7 @@
 
 export type RsvpStatus = "attending" | "declined" | "pending"
 export type AttendanceStatus = RsvpStatus
-export type MealChoice = "Beef" | "Chicken" | "Fish" | "Vegetarian" | ""
+export type MealChoice = "Beef" | "Chicken" | ""
 export type Meal = MealChoice
 
 export type RsvpRecord = {
@@ -14,6 +14,7 @@ export type RsvpRecord = {
   partySize: number
   plusOneName: string
   mealChoice: MealChoice
+  plusOneMealChoice: MealChoice
   dietaryRestrictions: string
   songRequest: string
   notes: string
@@ -29,6 +30,7 @@ export const mockRsvps: RsvpRecord[] = [
     partySize: 2,
     plusOneName: "Daniel Ellison",
     mealChoice: "Beef",
+    plusOneMealChoice: "Chicken",
     dietaryRestrictions: "None",
     songRequest: "At Last - Etta James",
     notes: "We are overjoyed for you both. Can't wait to celebrate!",
@@ -41,7 +43,8 @@ export const mockRsvps: RsvpRecord[] = [
     attendanceStatus: "attending",
     partySize: 1,
     plusOneName: "",
-    mealChoice: "Fish",
+    mealChoice: "Chicken",
+    plusOneMealChoice: "",
     dietaryRestrictions: "Shellfish allergy",
     songRequest: "Can't Help Falling in Love - Elvis Presley",
     notes: "Honored to stand beside you, James.",
@@ -55,6 +58,7 @@ export const mockRsvps: RsvpRecord[] = [
     partySize: 2,
     plusOneName: "Marcus Hartman",
     mealChoice: "Chicken",
+    plusOneMealChoice: "Beef",
     dietaryRestrictions: "None",
     songRequest: "Signed, Sealed, Delivered - Stevie Wonder",
     notes: "Please save us a spot on the dance floor.",
@@ -68,6 +72,7 @@ export const mockRsvps: RsvpRecord[] = [
     partySize: 0,
     plusOneName: "",
     mealChoice: "",
+    plusOneMealChoice: "",
     dietaryRestrictions: "",
     songRequest: "",
     notes: "So sorry to miss it, sending all our love from afar.",
@@ -80,7 +85,8 @@ export const mockRsvps: RsvpRecord[] = [
     attendanceStatus: "attending",
     partySize: 2,
     plusOneName: "Guest",
-    mealChoice: "Vegetarian",
+    mealChoice: "Chicken",
+    plusOneMealChoice: "Chicken",
     dietaryRestrictions: "Vegan",
     songRequest: "September - Earth, Wind & Fire",
     notes: "Counting down the days!",
@@ -94,6 +100,7 @@ export const mockRsvps: RsvpRecord[] = [
     partySize: 0,
     plusOneName: "",
     mealChoice: "",
+    plusOneMealChoice: "",
     dietaryRestrictions: "",
     songRequest: "",
     notes: "",
@@ -107,6 +114,7 @@ export const mockRsvps: RsvpRecord[] = [
     partySize: 1,
     plusOneName: "",
     mealChoice: "Beef",
+    plusOneMealChoice: "",
     dietaryRestrictions: "Gluten-free",
     songRequest: "The Way You Look Tonight - Frank Sinatra",
     notes: "We could not be prouder. With all our love, Mom.",
@@ -120,6 +128,7 @@ export const mockRsvps: RsvpRecord[] = [
     partySize: 0,
     plusOneName: "",
     mealChoice: "",
+    plusOneMealChoice: "",
     dietaryRestrictions: "",
     songRequest: "",
     notes: "",
@@ -133,6 +142,7 @@ export const mockRsvps: RsvpRecord[] = [
     partySize: 2,
     plusOneName: "Richard Calloway",
     mealChoice: "Chicken",
+    plusOneMealChoice: "Beef",
     dietaryRestrictions: "None",
     songRequest: "Unforgettable - Nat King Cole",
     notes: "Welcome to the family, Eleanor!",
@@ -146,6 +156,7 @@ export const mockRsvps: RsvpRecord[] = [
     partySize: 0,
     plusOneName: "",
     mealChoice: "",
+    plusOneMealChoice: "",
     dietaryRestrictions: "",
     songRequest: "",
     notes: "Wish we could be there. Congratulations to you both.",
@@ -158,7 +169,8 @@ export const mockRsvps: RsvpRecord[] = [
     attendanceStatus: "attending",
     partySize: 2,
     plusOneName: "Anna Calloway",
-    mealChoice: "Fish",
+    mealChoice: "Beef",
+    plusOneMealChoice: "Chicken",
     dietaryRestrictions: "None",
     songRequest: "You Make My Dreams - Hall & Oates",
     notes: "Best man and ready to celebrate!",
@@ -172,6 +184,7 @@ export const mockRsvps: RsvpRecord[] = [
     partySize: 0,
     plusOneName: "",
     mealChoice: "",
+    plusOneMealChoice: "",
     dietaryRestrictions: "",
     songRequest: "",
     notes: "",
@@ -179,4 +192,4 @@ export const mockRsvps: RsvpRecord[] = [
   },
 ]
 
-export const mealOptions = ["Beef", "Chicken", "Fish", "Vegetarian"] as const
+export const mealOptions = ["Beef", "Chicken"] as const

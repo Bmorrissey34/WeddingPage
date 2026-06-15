@@ -78,6 +78,7 @@ type FirestoreRsvpDoc = {
   partySize?: number
   plusOneName?: string
   mealChoice?: string
+  plusOneMealChoice?: string
   dietaryRestrictions?: string
   songRequest?: string
   notes?: string
@@ -393,6 +394,7 @@ function Dashboard({
       "Party Size",
       "Plus One",
       "Meal Choice",
+      "Plus One Meal Choice",
       "Dietary Restrictions",
       "Song Request",
       "Notes",
@@ -406,6 +408,7 @@ function Dashboard({
       String(record.partySize),
       record.plusOneName || "",
       record.mealChoice,
+      record.plusOneMealChoice,
       record.dietaryRestrictions || "",
       record.songRequest || "",
       record.notes || "",
@@ -715,6 +718,7 @@ function RsvpDetailsDialog({
       partySize: normalizedPartySize,
       plusOneName: isAttending && normalizedPartySize > 1 ? current.plusOneName.trim() : "",
       mealChoice: isAttending ? current.mealChoice : "",
+      plusOneMealChoice: isAttending && normalizedPartySize > 1 ? current.plusOneMealChoice : "",
       dietaryRestrictions: isAttending ? current.dietaryRestrictions.trim() : "",
       songRequest: isAttending ? current.songRequest.trim() : "",
       notes: current.notes.trim(),
@@ -755,6 +759,11 @@ function RsvpDetailsDialog({
       return
     }
 
+    if (normalized.attendanceStatus === "attending" && normalized.partySize > 1 && !normalized.plusOneMealChoice) {
+      setSaveError("Please choose a meal option for the plus-one guest.")
+      return
+    }
+
     setIsSaving(true)
     setSaveError("")
     setSaveSuccess("")
@@ -775,6 +784,7 @@ function RsvpDetailsDialog({
               partySize: normalized.partySize,
               plusOneName: normalized.plusOneName,
               mealChoice: normalized.mealChoice,
+              plusOneMealChoice: normalized.plusOneMealChoice,
               dietaryRestrictions: normalized.dietaryRestrictions,
               songRequest: normalized.songRequest,
               notes: normalized.notes,
@@ -836,6 +846,21 @@ function RsvpDetailsDialog({
               onChange={(event) => updateField("plusOneName", event.target.value)}
               disabled={isSaving}
             />
+          </Field>
+          <Field label="Plus one meal choice">
+            <select
+              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              value={form.plusOneMealChoice}
+              onChange={(event) => updateField("plusOneMealChoice", event.target.value as MealChoice)}
+              disabled={isSaving}
+            >
+              <option value="">No selection</option>
+              {mealOptions.map((meal) => (
+                <option key={meal} value={meal}>
+                  {meal}
+                </option>
+              ))}
+            </select>
           </Field>
           <Field label="Meal choice">
             <select
@@ -907,6 +932,7 @@ function RsvpDetailsDialog({
 function mapFirestoreRsvp(id: string, data: FirestoreRsvpDoc): RsvpRecord {
   const attendanceStatus = toRsvpStatus(data.attendanceStatus)
   const mealChoice = toMealChoice(data.mealChoice)
+  const plusOneMealChoice = toMealChoice(data.plusOneMealChoice)
   const partySize = typeof data.partySize === "number" ? data.partySize : attendanceStatus === "attending" ? 1 : 0
 
   return {
@@ -917,6 +943,7 @@ function mapFirestoreRsvp(id: string, data: FirestoreRsvpDoc): RsvpRecord {
     partySize,
     plusOneName: typeof data.plusOneName === "string" ? data.plusOneName : "",
     mealChoice,
+    plusOneMealChoice,
     dietaryRestrictions: typeof data.dietaryRestrictions === "string" ? data.dietaryRestrictions : "",
     songRequest: typeof data.songRequest === "string" ? data.songRequest : "",
     notes: typeof data.notes === "string" ? data.notes : "",
@@ -933,7 +960,7 @@ function toRsvpStatus(value: string | undefined): RsvpStatus {
 }
 
 function toMealChoice(value: string | undefined): MealChoice {
-  if (value === "Beef" || value === "Chicken" || value === "Fish" || value === "Vegetarian") {
+  if (value === "Beef" || value === "Chicken") {
     return value
   }
 
