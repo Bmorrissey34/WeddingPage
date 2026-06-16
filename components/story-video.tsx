@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { Volume2, VolumeX } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
 type StoryVideoProps = {
@@ -14,7 +15,8 @@ export function StoryVideo({ src, poster, title }: StoryVideoProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [showPoster, setShowPoster] = useState(true)
   const [hasEnded, setHasEnded] = useState(false)
-  const [volume, setVolume] = useState(0.5)
+  const [volume, setVolume] = useState(0.2)
+  const [showVolumeControl, setShowVolumeControl] = useState(false)
 
   useEffect(() => {
     const video = videoRef.current
@@ -67,6 +69,10 @@ export function StoryVideo({ src, poster, title }: StoryVideoProps) {
     if (video) {
       video.volume = nextVolume
     }
+  }
+
+  const toggleVolumeControl = () => {
+    setShowVolumeControl((current) => !current)
   }
 
   return (
@@ -170,23 +176,37 @@ export function StoryVideo({ src, poster, title }: StoryVideoProps) {
           </button>
 
           <div
-            className="absolute bottom-4 right-4 z-10 rounded-full border border-white/50 bg-white/88 px-3 py-2 shadow-lg backdrop-blur"
+            className="absolute bottom-4 right-4 z-10 flex items-center gap-2"
             onClick={(event) => event.stopPropagation()}
             onPointerDown={(event) => event.stopPropagation()}
           >
-            <label className="flex items-center gap-3 text-xs font-medium uppercase tracking-[0.18em] text-[var(--navy)]">
-              Volume
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.05"
-                value={volume}
-                onChange={(event) => handleVolumeChange(Number(event.target.value))}
-                className="h-1.5 w-24 accent-[var(--burgundy)]"
-                aria-label={`${title} volume`}
-              />
-            </label>
+            {showVolumeControl ? (
+              <div className="rounded-full border border-white/50 bg-white/88 px-3 py-2 shadow-lg backdrop-blur">
+                <label className="flex items-center gap-3 text-xs font-medium uppercase tracking-[0.18em] text-[var(--navy)]">
+                  Volume
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value={volume}
+                    onChange={(event) => handleVolumeChange(Number(event.target.value))}
+                    className="h-1.5 w-24 accent-[var(--burgundy)]"
+                    aria-label={`${title} volume`}
+                  />
+                </label>
+              </div>
+            ) : null}
+
+            <button
+              type="button"
+              aria-label={showVolumeControl ? `Hide ${title} volume control` : `Show ${title} volume control`}
+              aria-expanded={showVolumeControl}
+              onClick={toggleVolumeControl}
+              className="flex size-11 items-center justify-center rounded-full border border-white/60 bg-white/88 text-[var(--navy)] shadow-lg transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              {volume === 0 ? <VolumeX className="size-4.5" /> : <Volume2 className="size-4.5" />}
+            </button>
           </div>
         </>
       )}
