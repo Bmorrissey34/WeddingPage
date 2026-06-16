@@ -154,7 +154,7 @@ export const venues: Venue[] = [
     id: "desoto",
     name: "The DeSoto",
     role: "Reception",
-    image: null,
+    image: "/images/DeSoto_Savannah.jpg",
     address: "15 E Liberty St, Savannah, GA 31401",
     parking:
       "Valet parking is available at the hotel entrance on Liberty Street. Self-parking is offered in the adjacent garage.",
