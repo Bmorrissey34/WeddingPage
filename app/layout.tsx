@@ -2,7 +2,6 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
 import { Cormorant_Garamond, Inter, Geist_Mono } from 'next/font/google'
 import { FirebaseAnalytics } from '@/components/firebase-analytics'
-import { RsvpAccessGate } from '@/components/rsvp-access-gate'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { Toaster } from '@/components/ui/sonner'
@@ -46,14 +45,12 @@ export default function RootLayout({
       className={`${cormorant.variable} ${inter.variable} ${geistMono.variable} bg-background`}
     >
       <body className="font-sans antialiased">
-        <RsvpAccessGate>
-          <SiteHeader />
-          <main className="min-h-[60vh]">{children}</main>
-          <SiteFooter />
-          <Toaster />
-          <FirebaseAnalytics />
-          {process.env.NODE_ENV === 'production' && <Analytics />}
-        </RsvpAccessGate>
+        <SiteHeader />
+        <main className="min-h-[60vh]">{children}</main>
+        <SiteFooter />
+        <Toaster />
+        <FirebaseAnalytics />
+        {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
   )

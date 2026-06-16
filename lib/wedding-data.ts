@@ -143,7 +143,7 @@ export const venues: Venue[] = [
     id: "church",
     name: "Trinity Methodist Church",
     role: "Ceremony",
-    image: "images/Trinity_Methodist_Church_-_August_9,_2020.jpg",
+    image: "/images/Trinity_Methodist_Church_-_August_9,_2020.jpg",
     address: "225 W President St, Savannah, GA 31401",
     parking:
       "Street parking is available around Telfair Square. Public garages are a short walk away on Bryan Street and Liberty Street.",
@@ -154,7 +154,7 @@ export const venues: Venue[] = [
     id: "desoto",
     name: "The DeSoto",
     role: "Reception",
-    image: "images/hotel-desoto-savannah.jpg",
+    image: "/images/hotel-desoto-savannah.jpg",
     address: "15 E Liberty St, Savannah, GA 31401",
     parking:
       "Valet parking is available at the hotel entrance on Liberty Street. Self-parking is offered in the adjacent garage.",
@@ -203,7 +203,7 @@ export const storyMoments: StoryMoment[] = [
     title: "A Hike and a Drone",
     body: "On April 26, 2024, their story took its next step at Rainbow Falls in Chattanooga. Brendan planned a proposal on a rock beneath the falls and filmed the moment with a drone, since it was no small task to find a photographer willing to hike two miles downhill through the forest. It was a joyful, unforgettable day, and of course, the answer was yes.",
     image: "/images/IMG_3449.JPG",
-    video: "/video/82A91697-DC2D-4685-B2A3-F3494136ECEE.MP4",
+    video: "/video/82A91697-Dc2d-4685-B2a3-F3494136ecee.mp4",
   },
   {
     id: "forever",
