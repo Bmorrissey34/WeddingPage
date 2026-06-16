@@ -48,7 +48,7 @@ export default function VenuesPage() {
                           <div className="flex flex-col items-center gap-2 text-center text-[var(--navy-foreground)]">
                             <MapPin className="size-7 text-[var(--sage)]" />
                             <span className="text-sm uppercase tracking-[0.25em] text-[var(--sage)]">
-                              Location Coming Soon
+                              {venue.comingSoon ? "Location Coming Soon" : "Photo Coming Soon"}
                             </span>
                           </div>
                         </div>
