@@ -132,6 +132,7 @@ export type Venue = {
   name: string
   role: string
   image: string | null
+  imageAttribution?: string
   address: string
   parking: string
   transportation: string
@@ -144,6 +145,8 @@ export const venues: Venue[] = [
     name: "Trinity Methodist Church",
     role: "Ceremony",
     image: "/images/Trinity_Methodist_Church_-_August_9,_2020.jpg",
+    imageAttribution:
+      "Photo by JeffersonLH via Wikimedia Commons, licensed under CC BY-SA 4.0. Cropped and modified for display.",
     address: "225 W President St, Savannah, GA 31401",
     parking:
       "Street parking is available around Telfair Square. Public garages are a short walk away on Bryan Street and Liberty Street.",
@@ -155,6 +158,8 @@ export const venues: Venue[] = [
     name: "The DeSoto",
     role: "Reception",
     image: "/images/DeSoto_Savannah.jpg",
+    imageAttribution:
+      "Photo by Jud McCranie via Wikimedia Commons, licensed under CC BY-SA 4.0. Cropped and modified for display.",
     address: "15 E Liberty St, Savannah, GA 31401",
     parking:
       "Valet parking is available at the hotel entrance on Liberty Street. Self-parking is offered in the adjacent garage.",

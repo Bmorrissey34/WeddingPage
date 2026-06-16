@@ -35,13 +35,20 @@ export default function VenuesPage() {
                     {/* Image / placeholder */}
                     <div className={index % 2 === 1 ? "md:order-2" : ""}>
                       {venue.image ? (
-                        <div className="relative aspect-[5/4] w-full overflow-hidden bg-[rgba(255,252,247,0.92)] md:h-full">
-                          <Image
-                            src={venue.image}
-                            alt={venue.name}
-                            fill
-                            className="object-contain p-3 sm:p-4"
-                          />
+                        <div className="flex h-full flex-col bg-[rgba(255,252,247,0.92)]">
+                          <div className="relative aspect-[5/4] w-full overflow-hidden md:h-full">
+                            <Image
+                              src={venue.image}
+                              alt={venue.name}
+                              fill
+                              className="object-contain p-3 sm:p-4"
+                            />
+                          </div>
+                          {venue.imageAttribution ? (
+                            <p className="border-t border-border/60 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+                              {venue.imageAttribution}
+                            </p>
+                          ) : null}
                         </div>
                       ) : (
                         <div className="flex aspect-[4/3] w-full items-center justify-center bg-[var(--navy)] md:h-full">
