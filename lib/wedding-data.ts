@@ -12,7 +12,7 @@ export const wedding = {
     dateLong: "Saturday, November 14, 2026",
     dateShort: "11 . 14 . 2026",
   city: "Savannah, Georgia",
-  hashtag: "#MeetUsInTheMoss",
+  hashtag: "#MeetTheMorrisseys",
   rsvpDeadline: "September 1, 2026",
 }
 
