@@ -21,11 +21,47 @@ export type NavLink = { label: string; href: string }
 export const navLinks: NavLink[] = [
   { label: "Home", href: "/" },
   { label: "Our Story", href: "/story" },
+  { label: "Gallery", href: "/gallery" },
   { label: "Schedule", href: "/schedule" },
   { label: "Venues", href: "/venues" },
   { label: "Travel", href: "/travel" },
   { label: "Registry", href: "/registry" },
   { label: "FAQ", href: "/faq" },
+]
+
+export type GalleryPhoto = {
+  id: string
+  src: string
+  alt: string
+}
+
+export const galleryPhotos: GalleryPhoto[] = [
+  { id: "7223", src: "/images/morgan&brendanengaged-7223.jpg", alt: "Morgan and Brendan during their engagement session in Savannah" },
+  { id: "7249", src: "/images/morgan&brendanengaged-7249.jpg", alt: "Morgan and Brendan walking together beneath Savannah trees" },
+  { id: "7302", src: "/images/morgan&brendanengaged-7302.jpg", alt: "Morgan and Brendan sharing a quiet engagement portrait" },
+  { id: "7305", src: "/images/morgan&brendanengaged-7305.jpg", alt: "Morgan and Brendan smiling together during their engagement session" },
+  { id: "7316", src: "/images/morgan&brendanengaged-7316.jpg", alt: "Morgan and Brendan in an editorial engagement portrait" },
+  { id: "7373", src: "/images/morgan&brendanengaged-7373.jpg", alt: "Morgan and Brendan posing together in Savannah" },
+  { id: "7464", src: "/images/morgan&brendanengaged-7464.jpg", alt: "Morgan and Brendan holding one another during their engagement photos" },
+  { id: "7509", src: "/images/morgan&brendanengaged-7509.jpg", alt: "Morgan and Brendan framed by historic Savannah scenery" },
+  { id: "7563", src: "/images/morgan&brendanengaged-7563.jpg", alt: "Morgan and Brendan enjoying a candid engagement moment" },
+  { id: "7567", src: "/images/morgan&brendanengaged-7567.jpg", alt: "Morgan and Brendan in a romantic Savannah engagement portrait" },
+  { id: "7632", src: "/images/morgan&brendanengaged-7632.jpg", alt: "Morgan and Brendan embracing during golden-hour engagement photos" },
+  { id: "7641", src: "/images/morgan&brendanengaged-7641.jpg", alt: "Morgan and Brendan together beneath the oaks" },
+  { id: "7682", src: "/images/morgan&brendanengaged-7682.jpg", alt: "Morgan and Brendan sharing a classic engagement portrait in Savannah" },
+  { id: "7695", src: "/images/morgan&brendanengaged-7695.jpg", alt: "Morgan and Brendan standing together for an engagement portrait" },
+  { id: "7741", src: "/images/morgan&brendanengaged-7741.jpg", alt: "Morgan and Brendan laughing together during their photo session" },
+  { id: "7756", src: "/images/morgan&brendanengaged-7756.jpg", alt: "Morgan and Brendan posing in Savannah's historic district" },
+  { id: "7770", src: "/images/morgan&brendanengaged-7770.jpg", alt: "Morgan and Brendan in a refined engagement portrait" },
+  { id: "7799", src: "/images/morgan&brendanengaged-7799.jpg", alt: "Morgan and Brendan close together during their engagement session" },
+  { id: "7848-2", src: "/images/morgan&brendanengaged-7848-2.jpg", alt: "Morgan and Brendan sharing a soft engagement portrait in Savannah" },
+  { id: "7848", src: "/images/morgan&brendanengaged-7848.jpg", alt: "Morgan and Brendan during a quiet engagement moment outdoors" },
+  { id: "7870-2", src: "/images/morgan&brendanengaged-7870-2.jpg", alt: "Morgan and Brendan photographed in a romantic editorial style" },
+  { id: "7870", src: "/images/morgan&brendanengaged-7870.jpg", alt: "Morgan and Brendan smiling in a formal engagement portrait" },
+  { id: "7885", src: "/images/morgan&brendanengaged-7885.jpg", alt: "Morgan and Brendan in a timeless engagement photograph" },
+  { id: "7934", src: "/images/morgan&brendanengaged-7934.jpg", alt: "Morgan and Brendan together in Savannah's evening light" },
+  { id: "7984-2", src: "/images/morgan&brendanengaged-7984-2.jpg", alt: "Morgan and Brendan celebrating their engagement in Savannah" },
+  { id: "7984", src: "/images/morgan&brendanengaged-7984.jpg", alt: "Morgan and Brendan in a final engagement portrait for their gallery" },
 ]
 
 export type ScheduleEvent = {
