@@ -15,7 +15,7 @@ export function StoryVideo({ src, poster, title }: StoryVideoProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [showPoster, setShowPoster] = useState(true)
   const [hasEnded, setHasEnded] = useState(false)
-  const [volume, setVolume] = useState(0.2)
+  const [volume, setVolume] = useState(0.1)
   const [showVolumeControl, setShowVolumeControl] = useState(false)
 
   useEffect(() => {
