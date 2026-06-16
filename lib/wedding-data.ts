@@ -203,7 +203,7 @@ export const storyMoments: StoryMoment[] = [
     title: "A Hike and a Drone",
     body: "On April 26, 2024, their story took its next step at Rainbow Falls in Chattanooga. Brendan planned a proposal on a rock beneath the falls and filmed the moment with a drone, since it was no small task to find a photographer willing to hike two miles downhill through the forest. It was a joyful, unforgettable day, and of course, the answer was yes.",
     image: "/images/IMG_3449.JPG",
-    video: "/video/82A91697-Dc2d-4685-B2a3-F3494136ecee.mp4",
+    video: "/video/engagement_video.mp4",
   },
   {
     id: "forever",
