@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 type StoryVideoProps = {
   src: string
@@ -14,6 +14,17 @@ export function StoryVideo({ src, poster, title }: StoryVideoProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [showPoster, setShowPoster] = useState(true)
   const [hasEnded, setHasEnded] = useState(false)
+  const [volume, setVolume] = useState(0.5)
+
+  useEffect(() => {
+    const video = videoRef.current
+
+    if (!video) {
+      return
+    }
+
+    video.volume = volume
+  }, [volume])
 
   const startPlayback = async () => {
     const video = videoRef.current
@@ -48,6 +59,16 @@ export function StoryVideo({ src, poster, title }: StoryVideoProps) {
     setIsPlaying(false)
   }
 
+  const handleVolumeChange = (nextVolume: number) => {
+    const video = videoRef.current
+
+    setVolume(nextVolume)
+
+    if (video) {
+      video.volume = nextVolume
+    }
+  }
+
   return (
     <div className="group relative overflow-hidden rounded-lg border border-border bg-secondary/30">
       <video
@@ -55,6 +76,13 @@ export function StoryVideo({ src, poster, title }: StoryVideoProps) {
         poster={poster}
         preload="metadata"
         playsInline
+        onLoadedMetadata={() => {
+          const video = videoRef.current
+
+          if (video) {
+            video.volume = volume
+          }
+        }}
         className="aspect-[4/3] w-full object-cover"
         onPlay={() => {
           setIsPlaying(true)
@@ -115,30 +143,52 @@ export function StoryVideo({ src, poster, title }: StoryVideoProps) {
           )}
         </div>
       ) : (
-        <button
-          type="button"
-          aria-label={isPlaying ? `Pause ${title} video` : `Play ${title} video`}
-          onClick={togglePlayback}
-          className="absolute inset-0 flex items-center justify-center bg-black/10 transition hover:bg-black/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        >
-          <span
-            className={`flex size-18 items-center justify-center rounded-full border border-white/60 bg-white/88 text-[var(--navy)] shadow-lg transition duration-300 ${
-              isPlaying ? "scale-90 opacity-0 group-hover:scale-100 group-hover:opacity-100" : ""
-            }`}
+        <>
+          <button
+            type="button"
+            aria-label={isPlaying ? `Pause ${title} video` : `Play ${title} video`}
+            onClick={togglePlayback}
+            className="absolute inset-0 flex items-center justify-center bg-black/10 transition hover:bg-black/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
-            {isPlaying ? (
-              <span className="flex gap-1.5">
-                <span className="h-5 w-1.5 rounded-full bg-current" />
-                <span className="h-5 w-1.5 rounded-full bg-current" />
-              </span>
-            ) : (
-              <span
-                aria-hidden
-                className="ml-1 block h-0 w-0 border-y-[10px] border-y-transparent border-l-[16px] border-l-current"
+            <span
+              className={`flex size-18 items-center justify-center rounded-full border border-white/60 bg-white/88 text-[var(--navy)] shadow-lg transition duration-300 ${
+                isPlaying ? "scale-90 opacity-0 group-hover:scale-100 group-hover:opacity-100" : ""
+              }`}
+            >
+              {isPlaying ? (
+                <span className="flex gap-1.5">
+                  <span className="h-5 w-1.5 rounded-full bg-current" />
+                  <span className="h-5 w-1.5 rounded-full bg-current" />
+                </span>
+              ) : (
+                <span
+                  aria-hidden
+                  className="ml-1 block h-0 w-0 border-y-[10px] border-y-transparent border-l-[16px] border-l-current"
+                />
+              )}
+            </span>
+          </button>
+
+          <div
+            className="absolute bottom-4 right-4 z-10 rounded-full border border-white/50 bg-white/88 px-3 py-2 shadow-lg backdrop-blur"
+            onClick={(event) => event.stopPropagation()}
+            onPointerDown={(event) => event.stopPropagation()}
+          >
+            <label className="flex items-center gap-3 text-xs font-medium uppercase tracking-[0.18em] text-[var(--navy)]">
+              Volume
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={volume}
+                onChange={(event) => handleVolumeChange(Number(event.target.value))}
+                className="h-1.5 w-24 accent-[var(--burgundy)]"
+                aria-label={`${title} volume`}
               />
-            )}
-          </span>
-        </button>
+            </label>
+          </div>
+        </>
       )}
     </div>
   )
