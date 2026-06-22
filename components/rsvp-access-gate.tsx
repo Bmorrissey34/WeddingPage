@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
-const RSVP_PASSWORD = "Morgan&Brendan2026"
+const RSVP_PASSWORD = process.env.NEXT_PUBLIC_HOTEL_BLOCK_PASSWORD?.trim()
 const RSVP_ACCESS_KEY = "wedding-rsvp-form-access"
 
 export function RsvpAccessGate({ children }: { children: ReactNode }) {
@@ -25,7 +25,7 @@ export function RsvpAccessGate({ children }: { children: ReactNode }) {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (password === RSVP_PASSWORD) {
+    if (RSVP_PASSWORD && password.trim() === RSVP_PASSWORD) {
       window.sessionStorage.setItem(RSVP_ACCESS_KEY, "granted")
       setIsUnlocked(true)
       setError("")
