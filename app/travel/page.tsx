@@ -1,10 +1,8 @@
 import Image from "next/image"
-import { Plane, Car, Bus, Hotel, Copy } from "lucide-react"
+import { Plane, Car, Bus } from "lucide-react"
 
+import { HotelBlockGate } from "@/components/hotel-block-gate"
 import { PageHeader, SectionHeading } from "@/components/section-heading"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Accordion,
   AccordionContent,
@@ -25,8 +23,6 @@ const travelLinkClassName =
   "inline-flex text-sm font-serif tracking-[0.02em] text-[var(--navy)] underline decoration-[rgba(34,49,63,0.28)] underline-offset-4 transition-colors hover:text-[var(--burgundy)]"
 
 export default function TravelPage() {
-  const hotelBlockMapsQuery = `${hotelBlock.name}, Savannah, GA`
-
   return (
     <>
       <PageHeader
@@ -72,66 +68,10 @@ export default function TravelPage() {
         <SectionHeading
           eyebrow="Where to Stay"
           title="Hotel Blocks"
-          description="Our only room block will be at The DeSoto. You may use the booking link below or reference the room block code when reserving."
+          description="Our only room block will be at The DeSoto. Invited guests can unlock the booking information with the password from their invitation."
         />
         <div className="mt-12">
-          <Card className="mx-auto flex max-w-2xl flex-col">
-            <CardHeader>
-              <span className="flex size-11 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--navy)]">
-                <Hotel className="size-5" />
-              </span>
-              <CardTitle className="mt-3 font-serif text-2xl">
-                {hotelBlock.name}
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">{hotelBlock.distance}</p>
-            </CardHeader>
-            <CardContent className="flex flex-1 flex-col gap-4">
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {hotelBlock.note}
-              </p>
-              {hotelBlock.phone ? (
-                <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-base text-muted-foreground sm:text-lg">
-                  <span className="font-serif tracking-[0.02em] text-foreground">Phone:</span>
-                  <span className="font-serif tracking-[0.02em] text-foreground">{hotelBlock.phone}</span>
-                </p>
-              ) : null}
-              <div className="mt-auto flex flex-col gap-3">
-                <p className="font-serif text-lg text-foreground">{hotelBlock.rate}</p>
-                <div className="flex items-center justify-between rounded-md border border-dashed border-border bg-secondary px-3 py-2">
-                  <span className="font-mono text-xs tracking-wide text-foreground">
-                    {hotelBlock.code}
-                  </span>
-                  <Copy className="size-3.5 text-muted-foreground" />
-                </div>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  render={<a href={hotelBlock.url} target="_blank" rel="noreferrer" />}
-                  nativeButton={false}
-                >
-                  Book a Room
-                </Button>
-                <div className="flex flex-wrap gap-3 text-sm">
-                  <a
-                    href={getGoogleMapsUrl(hotelBlockMapsQuery)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={travelLinkClassName}
-                  >
-                    Google Maps
-                  </a>
-                  <a
-                    href={getAppleMapsUrl(hotelBlockMapsQuery)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={travelLinkClassName}
-                  >
-                    Apple Maps
-                  </a>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <HotelBlockGate hotelBlock={hotelBlock} />
 
           <div className="mx-auto mt-8 max-w-2xl rounded-[2rem] border border-[rgba(34,49,63,0.1)] bg-[rgba(255,252,247,0.82)] p-6 shadow-[0_18px_50px_rgba(61,42,32,0.08)] sm:p-8">
             <div className="space-y-2">
