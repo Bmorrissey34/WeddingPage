@@ -44,7 +44,7 @@ export default function TravelPage() {
                 value="airport"
                 icon={Plane}
                 title="Airport Information"
-                body="Savannah/Hilton Head International Airport (SAV) is approximately 20 minutes from the Historic District. For more flight options, Jacksonville International (JAX) is about two hours south and Charleston International (CHS) is about two hours north."
+                body="Savannah/Hilton Head International Airport (SAV) is approximately 20 minutes from the Historic District. For additional flight options, Jacksonville International (JAX) is about two hours south, Charleston International (CHS) is about two hours north, and Hartsfield–Jackson Atlanta International Airport (ATL) is approximately 3.5–4 hours west by car and offers one of the largest selections of domestic and international flights."
               />
               <LogisticsItem
                 value="transport"
