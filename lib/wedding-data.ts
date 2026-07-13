@@ -303,7 +303,7 @@ export const faqs: Faq[] = [
   {
     question: "Where should I park?",
     answer:
-      "Valet and garage parking are available at The DeSoto. Street and garage parking surround Trinity Methodist Church in the Historic District. See the Venues page for details.",
+      "Valet parking is available at The DeSoto. Street and garage parking surround Trinity Methodist Church in the Historic District. See the Venues page for details.",
   },
   {
     question: "Will transportation be provided?",
@@ -318,7 +318,7 @@ export const faqs: Faq[] = [
   {
     question: "May I bring a plus-one?",
     answer:
-      "Plus-ones are noted on your invitation. If your invitation includes a guest, you will be able to add their name on the RSVP form.",
+      "Plus-ones are by invitation only. If both your name and your partner’s name are listed on your invitation, you’ll be able to RSVP for both guests.",
   },
   {
     question: "When should I RSVP by?",
