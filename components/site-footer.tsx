@@ -41,6 +41,9 @@ export function SiteFooter() {
         <p className="mt-10 text-center text-xs text-[var(--navy-foreground)]/55">
           {wedding.hashtag}
         </p>
+        <p className="mt-3 text-center text-xs text-[var(--navy-foreground)]/55">
+          Designed &amp; developed by Brendan Morrissey
+        </p>
       </div>
     </footer>
   )
