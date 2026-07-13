@@ -56,7 +56,7 @@ export default function TravelPage() {
                 value="parking"
                 icon={Car}
                 title="Parking"
-                body="Valet and garage parking are available at The DeSoto. Public parking garages and metered street parking surround the Historic District. Garages are generally the easiest option on weekends."
+                body="Only valet is available at The DeSoto. Public parking garages and metered street parking surround the Historic District. Garages are generally the easiest option on weekends."
               />
             </Accordion>
           </div>
