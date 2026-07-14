@@ -313,12 +313,12 @@ export const faqs: Faq[] = [
   {
     question: "Are children welcome?",
     answer:
-      "While we adore your little ones, we have chosen to make our wedding an adults-only celebration so that everyone may relax and enjoy the evening.",
+      "While we adore your little ones, but we have chosen to make our wedding an adults-only celebration.",
   },
   {
     question: "May I bring a plus-one?",
     answer:
-      "Plus-ones are by invitation only. If both your name and your partner’s name are listed on your invitation, you’ll be able to RSVP for both guests.",
+      "Plus-ones are by invitation only. If both your name and your partner’s name are listed on your RSVP, you’ll be able to RSVP for both guests.",
   },
   {
     question: "When should I RSVP by?",
