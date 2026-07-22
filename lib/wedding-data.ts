@@ -310,11 +310,11 @@ export const faqs: Faq[] = [
     answer:
       "Yes. A trolley will run between The DeSoto and Trinity Methodist Church to and from the ceremony. Additional transportation details will be shared closer to the date.",
   },
-  {
-    question: "Are children welcome?",
-    answer:
-      "While we adore your little ones, but we have chosen to make our wedding an adults-only celebration.",
-  },
+  // {
+  //   question: "Are children welcome?",
+  //   answer:
+  //     "While we adore your little ones, but we have chosen to make our wedding an adults-only celebration.",
+  // },
   {
     question: "May I bring a plus-one?",
     answer:
