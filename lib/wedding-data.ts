@@ -84,7 +84,7 @@ export const schedule: ScheduleEvent[] = [
     time: "7:00 PM – 10:00 PM",
     location: "Location to be announced",
     address: "Savannah, Georgia",
-    attire: "Black tie optional",
+    attire: "Business casual",
     notes:
       "Join us the evening before to greet friends and family arriving from near and far. Details coming soon.",
     status: "tbd",
