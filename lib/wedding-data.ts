@@ -384,14 +384,16 @@ export type RegistryItem = {
   id: string
   name: string
   description: string
+  url?: string
 }
 
 export const registries: RegistryItem[] = [
   {
-    id: "tbd",
-    name: "Registry Details to Come",
+    id: "zola",
+    name: "Zola Registry",
     description:
-      "We are still finalizing our registry and will share those details once everything is in place. Thank you for your patience and for celebrating this season with us.",
+      "For friends and family who have asked, our registry is available through Zola. Thank you for celebrating this season with us.",
+    url: "https://www.zola.com/registry/morganandbrendannovember14",
   },
 ]
 

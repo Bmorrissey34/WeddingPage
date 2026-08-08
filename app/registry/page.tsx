@@ -7,7 +7,7 @@ import { registries } from "@/lib/wedding-data"
 
 export const metadata = {
   title: "Registry | A Savannah Wedding",
-  description: "Registry details for our wedding celebration will be shared soon.",
+  description: "Registry details for Morgan and Brendan's wedding celebration.",
 }
 
 export default function RegistryPage() {
@@ -16,7 +16,7 @@ export default function RegistryPage() {
       <PageHeader
         eyebrow="With Gratitude"
         title="The Registry"
-        description="Your presence at our wedding is the greatest gift of all. We are still putting the finishing touches on our registry and will share those details soon."
+        description="Your presence at our wedding is the greatest gift of all. For friends and family who have asked, we have shared our registry below."
       />
 
       <section className="mx-auto max-w-4xl px-4 py-20 sm:px-6">
@@ -39,10 +39,28 @@ export default function RegistryPage() {
                 <p className="text-pretty leading-relaxed text-muted-foreground">
                   {registry.description}
                 </p>
-                <Button variant="outline" className="mt-auto w-full" disabled>
-                  Details to Come
-                  <ExternalLink data-icon="inline-end" />
-                </Button>
+                {registry.url ? (
+                  <Button
+                    variant="outline"
+                    className="mt-auto w-full"
+                    render={
+                      <a
+                        href={registry.url}
+                        target="_blank"
+                        rel="noreferrer"
+                      />
+                    }
+                    nativeButton={false}
+                  >
+                    View Registry
+                    <ExternalLink data-icon="inline-end" />
+                  </Button>
+                ) : (
+                  <Button variant="outline" className="mt-auto w-full" disabled>
+                    Details to Come
+                    <ExternalLink data-icon="inline-end" />
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ))}
