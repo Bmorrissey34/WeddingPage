@@ -235,7 +235,7 @@ export const hotelBlock: Hotel = {
   name: "The DeSoto",
   rate: "From $213 / night",
   distance: "Reception venue · Historic District",
-  note: "Our only room block will be at The DeSoto, where the reception will also be held. Stay where the celebration happens and enjoy the easiest walk home at the end of the evening.",
+  note: "Our only room block will be at The DeSoto, where the reception will also be held. Stay where the celebration happens and enjoy the easiest walk home at the end of the evening. If no rooms are available at our room block rate, please contact us so we can add more rooms to the block.",
   code: "2611HAVMOR",
   url: "https://be.synxis.com/?Hotel=76327&Chain=25795&arrive=2026-11-13&depart=2026-11-15&adult=1&child=0&group=2611HAVMOR",
   phone: "(912) 232-9000",
@@ -343,7 +343,7 @@ export const faqs: Faq[] = [
   {
     question: "Have hotel blocks been reserved?",
     answer:
-      "Yes. Our room block will be at The DeSoto. We will also share a few nearby hotel suggestions on the Travel page for guests who would prefer other accommodations.",
+      "Yes. Our room block will be at The DeSoto. If no rooms are available at our room block rate, please contact us so we can add more rooms to the block. We will also share a few nearby hotel suggestions on the Travel page for guests who would prefer other accommodations.",
   },
   {
     question: "What time does the ceremony begin?",
