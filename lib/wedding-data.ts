@@ -298,7 +298,7 @@ export const faqs: Faq[] = [
   {
     question: "What is the dress code?",
     answer:
-      "The dress code for the weekend is black tie optional. Tuxedos and formal gowns are welcome, and a dark suit or other formal evening attire is equally appropriate.",
+      "The dress code for the weekend is black tie (optional), aside from the welcome party, which will be business casual. Tuxedos and formal gowns are welcome, and a dark suit or other formal evening attire is equally appropriate.",
   },
   {
     question: "Where should I park?",

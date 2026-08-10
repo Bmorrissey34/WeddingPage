@@ -25,7 +25,9 @@ type FormState = {
   partySize: PartySize
   plusOneName: string
   mealChoice: Meal | ""
+  vegetarianMealRequest: boolean
   plusOneMealChoice: Meal | ""
+  plusOneVegetarianMealRequest: boolean
   dietaryRestrictions: string
   songRequest: string
   notes: string
@@ -38,7 +40,9 @@ const initialState: FormState = {
   partySize: "",
   plusOneName: "",
   mealChoice: "",
+  vegetarianMealRequest: false,
   plusOneMealChoice: "",
+  plusOneVegetarianMealRequest: false,
   dietaryRestrictions: "",
   songRequest: "",
   notes: "",
@@ -69,7 +73,9 @@ export function RsvpForm() {
       delete next.partySize
       delete next.plusOneName
       delete next.mealChoice
+      delete next.vegetarianMealRequest
       delete next.plusOneMealChoice
+      delete next.plusOneVegetarianMealRequest
       return next
     })
 
@@ -79,7 +85,9 @@ export function RsvpForm() {
       partySize: value === "attending" ? prev.partySize : "",
       plusOneName: value === "attending" ? prev.plusOneName : "",
       mealChoice: value === "attending" ? prev.mealChoice : "",
+      vegetarianMealRequest: value === "attending" ? prev.vegetarianMealRequest : false,
       plusOneMealChoice: value === "attending" ? prev.plusOneMealChoice : "",
+      plusOneVegetarianMealRequest: value === "attending" ? prev.plusOneVegetarianMealRequest : false,
       dietaryRestrictions: value === "attending" ? prev.dietaryRestrictions : "",
       songRequest: value === "attending" ? prev.songRequest : "",
     }))
@@ -92,6 +100,7 @@ export function RsvpForm() {
       delete next.partySize
       delete next.plusOneName
       delete next.plusOneMealChoice
+      delete next.plusOneVegetarianMealRequest
       return next
     })
 
@@ -100,6 +109,7 @@ export function RsvpForm() {
       partySize: value,
       plusOneName: value === 2 ? prev.plusOneName : "",
       plusOneMealChoice: value === 2 ? prev.plusOneMealChoice : "",
+      plusOneVegetarianMealRequest: value === 2 ? prev.plusOneVegetarianMealRequest : false,
     }))
   }
 
@@ -124,12 +134,14 @@ export function RsvpForm() {
     }
 
     if (!form.partySize) next.partySize = "Please choose your party size."
-    if (!form.mealChoice) next.mealChoice = "Please choose a meal."
+    if (!form.mealChoice && !form.vegetarianMealRequest) {
+      next.mealChoice = "Please choose a meal or request a vegetarian meal."
+    }
     if (form.partySize === 2 && !form.plusOneName.trim()) {
       next.plusOneName = "Please enter your guest's name."
     }
-    if (form.partySize === 2 && !form.plusOneMealChoice) {
-      next.plusOneMealChoice = "Please choose a meal for your guest."
+    if (form.partySize === 2 && !form.plusOneMealChoice && !form.plusOneVegetarianMealRequest) {
+      next.plusOneMealChoice = "Please choose a meal or request a vegetarian meal for your guest."
     }
 
     setErrors(next)
@@ -184,7 +196,9 @@ export function RsvpForm() {
         plusOneName: partySize > 1 ? form.plusOneName.trim() : "",
         mealChoice: isAttending ? form.mealChoice : "",
         plusOneMealChoice: isAttending && partySize > 1 ? form.plusOneMealChoice : "",
-        dietaryRestrictions: isAttending ? form.dietaryRestrictions.trim() : "",
+        dietaryRestrictions: isAttending
+          ? formatDietaryRestrictions(form.dietaryRestrictions, form.vegetarianMealRequest, partySize > 1 && form.plusOneVegetarianMealRequest)
+          : "",
         songRequest: isAttending ? form.songRequest.trim() : "",
         notes: form.notes.trim(),
         submittedAt: serverTimestamp(),
@@ -327,10 +341,24 @@ export function RsvpForm() {
                 onChange={(m) => update("mealChoice", m)}
                 disabled={isSubmitting}
               />
+              <VegetarianRequestCheckbox
+                id="vegetarianMealRequest"
+                checked={form.vegetarianMealRequest}
+                onChange={(checked) => {
+                  update("vegetarianMealRequest", checked)
+                  if (checked) {
+                    setErrors((prev) => {
+                      const next = { ...prev }
+                      delete next.mealChoice
+                      return next
+                    })
+                  }
+                }}
+                disabled={isSubmitting}
+              />
               <p className="text-sm leading-relaxed text-muted-foreground">
-                We are currently offering beef or chicken. If you need dietary accommodations,
-                please note them below. Special requests, including vegetarian meals, will be handled
-                with the kitchen on a case-by-case basis.
+                We are currently offering beef or chicken. Vegetarian meals and other special
+                requests will be handled with the kitchen on a case-by-case basis.
               </p>
             </Field>
 
@@ -351,6 +379,22 @@ export function RsvpForm() {
                     value={form.plusOneMealChoice}
                     onChange={(meal) => update("plusOneMealChoice", meal)}
                     disabled={isSubmitting}
+                  />
+                  <VegetarianRequestCheckbox
+                    id="plusOneVegetarianMealRequest"
+                    checked={form.plusOneVegetarianMealRequest}
+                    onChange={(checked) => {
+                      update("plusOneVegetarianMealRequest", checked)
+                      if (checked) {
+                        setErrors((prev) => {
+                          const next = { ...prev }
+                          delete next.plusOneMealChoice
+                          return next
+                        })
+                      }
+                    }}
+                    disabled={isSubmitting}
+                    label="Request a vegetarian meal for my guest"
                   />
                 </Field>
               </div>
@@ -441,6 +485,20 @@ function normalizeEmail(email: string) {
 
 function getRsvpDocumentId(normalizedEmail: string) {
   return encodeURIComponent(normalizedEmail)
+}
+
+function formatDietaryRestrictions(
+  dietaryRestrictions: string,
+  vegetarianMealRequest: boolean,
+  plusOneVegetarianMealRequest: boolean
+) {
+  const notes = dietaryRestrictions.trim()
+  const requests = [
+    vegetarianMealRequest ? "Vegetarian meal requested for primary guest" : "",
+    plusOneVegetarianMealRequest ? "Vegetarian meal requested for plus-one guest" : "",
+  ].filter(Boolean)
+
+  return [notes, ...requests].filter(Boolean).join("; ")
 }
 
 function getRsvpSubmitErrorMessage(error: unknown) {
@@ -555,6 +613,41 @@ function MealPicker({
         </Label>
       ))}
     </RadioGroup>
+  )
+}
+
+function VegetarianRequestCheckbox({
+  id,
+  checked,
+  onChange,
+  disabled,
+  label = "Request a vegetarian meal",
+}: {
+  id: string
+  checked: boolean
+  onChange: (checked: boolean) => void
+  disabled?: boolean
+  label?: string
+}) {
+  return (
+    <Label
+      htmlFor={id}
+      className={cn(
+        "flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-border p-3 transition-colors",
+        checked ? "border-[var(--sage)] bg-[var(--accent)]" : "hover:border-[var(--sage)]",
+        disabled ? "cursor-not-allowed opacity-70" : ""
+      )}
+    >
+      <input
+        id={id}
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+        disabled={disabled}
+        className="size-4 shrink-0 accent-[var(--navy)]"
+      />
+      <span className="text-sm font-medium text-foreground">{label}</span>
+    </Label>
   )
 }
 
