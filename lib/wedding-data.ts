@@ -237,7 +237,7 @@ export const hotelBlock: Hotel = {
   distance: "Reception venue · Historic District",
   note: "Our only room block will be at The DeSoto, where the reception will also be held. Stay where the celebration happens and enjoy the easiest walk home at the end of the evening. If no rooms are available at our room block rate, please contact us so we can add more rooms to the block.",
   code: "2611HAVMOR",
-  url: "https://be.synxis.com/?Hotel=76327&Chain=25795&arrive=2026-11-13&depart=2026-11-15&adult=1&child=0&group=2611HAVMOR",
+  url: "https://be.synxis.com/?adult=1&arrive=2026-11-13&chain=25795&child=0&currency=USD&depart=2026-11-15&group=2611HAVMOR&hotel=76327&level=hotel&locale=en-US&productcurrency=USD&rooms=1",
   phone: "(912) 232-9000",
 }
 
