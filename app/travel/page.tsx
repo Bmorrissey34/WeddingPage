@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/accordion"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getAppleMapsUrl, getGoogleMapsUrl } from "@/lib/map-links"
-import { hotelBlock, nearbyHotels, thingsToDo } from "@/lib/wedding-data"
+import { hotelBlock, thingsToDo } from "@/lib/wedding-data"
 
 export const metadata = {
   title: "Travel | A Savannah Wedding",
-  description: "Hotels, airport details, transportation, and things to do in Savannah.",
+  description: "Hotel block, airport details, transportation, and things to do in Savannah.",
 }
 
 const categories = ["See", "Eat", "Drink"] as const
@@ -28,7 +28,7 @@ export default function TravelPage() {
       <PageHeader
         eyebrow="Plan Your Visit"
         title="Travel & Accommodations"
-        description="Whether you're traveling near or far, here is everything you need for a seamless stay in Savannah."
+        description="Whether you're traveling near or far, here is everything you need for a seamless stay at The DeSoto in Savannah."
       />
 
       {/* Getting Around */}
@@ -63,72 +63,15 @@ export default function TravelPage() {
         </div>
       </section>
 
-      {/* Hotels */}
+      {/* Hotel */}
       <section id="hotel-blocks" className="mx-auto max-w-5xl px-4 py-20 sm:px-6">
         <SectionHeading
           eyebrow="Where to Stay"
-          title="Hotel Blocks"
+          title="The DeSoto"
           description="Our only room block will be at The DeSoto. Invited guests can unlock the booking information with the password from their invitation."
         />
         <div className="mt-12">
           <HotelBlockGate hotelBlock={hotelBlock} />
-
-          <div className="mx-auto mt-8 max-w-2xl rounded-[2rem] border border-[rgba(34,49,63,0.1)] bg-[rgba(255,252,247,0.82)] p-6 shadow-[0_18px_50px_rgba(61,42,32,0.08)] sm:p-8">
-            <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--burgundy)]">
-                Nearby Options
-              </p>
-              <h3 className="font-serif text-2xl text-[var(--navy)]">Other nearby hotels to consider</h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                If you would prefer to stay elsewhere, these are a few nearby Savannah properties that are also close
-                to the wedding weekend festivities.
-              </p>
-            </div>
-
-            <div className="mt-6 flex flex-col gap-3">
-              {nearbyHotels.map((hotel) => (
-                <div
-                  key={hotel.id}
-                  className="rounded-2xl border border-[rgba(34,49,63,0.08)] bg-white/70 p-5"
-                >
-                  <h4 className="font-serif text-lg text-foreground">{hotel.name}</h4>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{hotel.note}</p>
-                  {hotel.phone ? (
-                    <p className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-base text-muted-foreground sm:text-lg">
-                      <span className="font-serif tracking-[0.02em] text-foreground">Phone:</span>
-                      <span className="font-serif tracking-[0.02em] text-foreground">{hotel.phone}</span>
-                    </p>
-                  ) : null}
-                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm">
-                    <a
-                      href={hotel.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={travelLinkClassName}
-                    >
-                      View hotel
-                    </a>
-                    <a
-                      href={getGoogleMapsUrl(`${hotel.name}, Savannah, GA`)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={travelLinkClassName}
-                    >
-                      Google Maps
-                    </a>
-                    <a
-                      href={getAppleMapsUrl(`${hotel.name}, Savannah, GA`)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={travelLinkClassName}
-                    >
-                      Apple Maps
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 

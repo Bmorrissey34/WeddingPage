@@ -222,7 +222,6 @@ export const storyMoments: StoryMoment[] = [
 export type Hotel = {
   id: string
   name: string
-  rate: string
   distance: string
   note: string
   code: string
@@ -233,59 +232,12 @@ export type Hotel = {
 export const hotelBlock: Hotel = {
   id: "desoto-hotel",
   name: "The DeSoto",
-  rate: "From $213 / night",
   distance: "Reception venue · Historic District",
-  note: "Our only room block will be at The DeSoto, where the reception will also be held. Stay where the celebration happens and enjoy the easiest walk home at the end of the evening. If no rooms are available at our room block rate, please contact us so we can add more rooms to the block.",
+  note: "Our only room block will be at The DeSoto, where the reception will also be held. Stay where the celebration happens and enjoy the easiest walk home at the end of the evening. If no rooms are available in our room block, please contact us so we can add more rooms to the block.",
   code: "2611HAVMOR",
   url: "https://be.synxis.com/?adult=1&arrive=2026-11-13&chain=25795&child=0&currency=USD&depart=2026-11-15&group=2611HAVMOR&hotel=76327&level=hotel&locale=en-US&productcurrency=USD&rooms=1",
   phone: "(912) 232-9000",
 }
-
-export type NearbyHotel = {
-  id: string
-  name: string
-  note: string
-  url: string
-  phone?: string
-}
-
-export const nearbyHotels: NearbyHotel[] = [
-  {
-    id: "perry-lane",
-    name: "Perry Lane Hotel",
-    note: "A polished boutique stay for guests looking for a luxe Savannah weekend in the Historic District.",
-    url: "https://www.perrylanehotel.com/",
-    phone: "(912) 415-9000",
-  },
-  {
-    id: "marshall-house",
-    name: "The Marshall House",
-    note: "A beloved historic Savannah hotel with classic Southern character and plenty of charm.",
-    url: "https://www.marshallhouse.com/",
-    phone: "(912) 644-7896",
-  },
-  {
-    id: "hyatt-regency-savannah",
-    name: "Hyatt Regency Savannah",
-    note: "A reliable waterfront chain option for guests who prefer a larger full-service hotel.",
-    url: "https://www.hyatt.com/hyatt-regency/en-US/savrs-hyatt-regency-savannah",
-    phone: "(912) 238-1234",
-  },
-  {
-    id: "andaz-savannah",
-    name: "Andaz Savannah",
-    note: "A stylish chain hotel near City Market with convenient access to the Historic District.",
-    url: "https://www.hyatt.com/andaz/en-US/savrd-andaz-savannah",
-    phone: "(912) 233-2116",
-  },
-  {
-    id: "holiday-inn-express-savannah-historic-district",
-    name: "Holiday Inn Express Savannah Historic District",
-    note: "A straightforward chain stay for guests who want a comfortable and convenient home base downtown.",
-    url: "https://www.ihg.com/holidayinnexpress/hotels/us/en/savannah/savhd/hoteldetail",
-    phone: "+1-912-292-0350",
-  },
-]
 
 export type Faq = { question: string; answer: string }
 
@@ -343,7 +295,7 @@ export const faqs: Faq[] = [
   {
     question: "Have hotel blocks been reserved?",
     answer:
-      "Yes. Our room block will be at The DeSoto. If no rooms are available at our room block rate, please contact us so we can add more rooms to the block. We will also share a few nearby hotel suggestions on the Travel page for guests who would prefer other accommodations.",
+      "Yes. Our only room block will be at The DeSoto. If no rooms are available in our room block, please contact us so we can add more rooms to the block.",
   },
   {
     question: "What time does the ceremony begin?",

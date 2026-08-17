@@ -23,7 +23,7 @@ const previewCards = [
   },
   {
     title: "Travel & Stay",
-    description: "Hotel blocks, transportation, and things to do in Savannah.",
+    description: "The DeSoto room block, transportation, and things to do in Savannah.",
     href: "/travel",
     icon: Plane,
   },

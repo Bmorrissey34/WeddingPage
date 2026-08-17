@@ -56,7 +56,6 @@ export function HotelBlockGate({ hotelBlock }: HotelBlockGateProps) {
 
         {isUnlocked ? (
           <div className="mt-auto flex flex-col gap-3">
-            <p className="font-serif text-lg text-foreground">{hotelBlock.rate}</p>
             <div className="flex items-center justify-between rounded-md border border-dashed border-border bg-secondary px-3 py-2">
               <span className="font-mono text-xs tracking-wide text-foreground">{hotelBlock.code}</span>
               <Copy className="size-3.5 text-muted-foreground" />
