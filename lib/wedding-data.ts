@@ -170,7 +170,7 @@ export const venues: Venue[] = [
     id: "welcome",
     name: "Churchill's",
     role: "Welcome Party",
-    image: null,
+    image: "/images/churchills.png",
     address: "13 W Bay St, Savannah, GA 31401",
     parking: "Downtown street and garage parking are available nearby.",
     transportation: "The venue is downtown and walkable from many Historic District hotels.",
