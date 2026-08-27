@@ -82,7 +82,7 @@ export const schedule: ScheduleEvent[] = [
     title: "Welcome Party",
     date: "Friday, November 13, 2026",
     time: "5:30 PM - 10:00 PM",
-    location: "Churchill's 10 Downing Street and Roof Deck",
+    location: "Churchill's",
     address: "13 W Bay St, Savannah, GA 31401",
     attire: "Business casual",
     notes:
@@ -168,7 +168,7 @@ export const venues: Venue[] = [
   },
   {
     id: "welcome",
-    name: "Churchill's 10 Downing Street and Roof Deck",
+    name: "Churchill's",
     role: "Welcome Party",
     image: null,
     address: "13 W Bay St, Savannah, GA 31401",
