@@ -105,7 +105,7 @@ export const schedule: ScheduleEvent[] = [
     id: "cocktail-hour",
     title: "Cocktail Hour",
     date: "Saturday, November 14, 2026",
-    time: "6:00 PM - 7:00 PM",
+    time: "5:00 PM - 6:00 PM",
     location: "The DeSoto",
     address: "15 E Liberty St, Savannah, GA 31401",
     attire: "Black tie optional",
@@ -117,7 +117,7 @@ export const schedule: ScheduleEvent[] = [
     id: "reception",
     title: "The Reception",
     date: "Saturday, November 14, 2026",
-    time: "7:00 PM - 11:00 PM",
+    time: "6:00 PM - 10:00 PM",
     location: "The DeSoto",
     address: "15 E Liberty St, Savannah, GA 31401",
     attire: "Black tie optional",
@@ -304,7 +304,7 @@ export const faqs: Faq[] = [
   {
     question: "What time does the reception end?",
     answer:
-      "The reception at The DeSoto will conclude at 11:00 PM.",
+      "The reception at The DeSoto will conclude at 10:00 PM.",
   },
   {
     question: "What is the weather like in Savannah in November?",
