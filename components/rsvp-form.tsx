@@ -431,10 +431,13 @@ export function RsvpForm() {
                 id="notes"
                 value={form.notes}
                 onChange={(e) => update("notes", e.target.value)}
-                placeholder="Share your well-wishes..."
+                placeholder="Share your well-wishes or any meal notes..."
                 rows={4}
                 disabled={isSubmitting}
               />
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                If you are bringing kids, please include their meal choices here.
+              </p>
             </Field>
             {submitError ? (
               <p className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">

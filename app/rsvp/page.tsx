@@ -50,7 +50,8 @@ export default function RsvpPage() {
                 Need to change your RSVP? Please reach out to Brendan or Morgan directly, and we&apos;ll be happy to
                 update it for you. The same goes for correcting an email address, adjusting a guest name, or revising a
                 meal selection. If you need any dietary accommodations beyond the listed beef or chicken options, please
-                contact us directly as well.
+                contact us directly as well. If you are bringing kids, please include their meal choices in the RSVP
+                note field.
               </p>
             </div>
           </div>
