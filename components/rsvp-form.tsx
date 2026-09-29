@@ -306,6 +306,15 @@ export function RsvpForm() {
         {/* Step 1: meal & guest */}
         {step === 1 ? (
           <div className="flex flex-col gap-6">
+            <div className="flex gap-3 rounded-md border border-[var(--burgundy)]/35 bg-[var(--burgundy)]/5 px-4 py-3 text-[var(--burgundy)]">
+              <Utensils className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
+              <div>
+                <p className="text-sm font-semibold">Bringing children?</p>
+                <p className="mt-0.5 text-sm leading-relaxed">
+                  On the next page, please use the notes field to include each child&apos;s name and meal choice.
+                </p>
+              </div>
+            </div>
             <Field label="Party Size" error={errors.partySize}>
               <RadioGroup
                 value={form.partySize ? String(form.partySize) : ""}
@@ -432,7 +441,7 @@ export function RsvpForm() {
                 <div>
                   <p className="text-sm font-semibold">Important for families</p>
                   <p className="mt-0.5 text-sm leading-relaxed">
-                    Bringing kids? Please include each child&apos;s meal choice in the notes below.
+                    Please include each child&apos;s name and meal choice in the notes below.
                   </p>
                 </div>
               </div>
