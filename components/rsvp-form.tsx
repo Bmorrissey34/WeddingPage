@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { doc, serverTimestamp, setDoc } from "firebase/firestore"
-import { Check, CalendarHeart, PartyPopper, Heart } from "lucide-react"
+import { Check, CalendarHeart, PartyPopper, Heart, Utensils } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -427,6 +427,15 @@ export function RsvpForm() {
               </Field>
             ) : null}
             <Field label="A Note for the Couple (optional)" htmlFor="notes">
+              <div className="flex gap-3 rounded-md border border-[var(--burgundy)]/35 bg-[var(--burgundy)]/5 px-4 py-3 text-[var(--burgundy)]">
+                <Utensils className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
+                <div>
+                  <p className="text-sm font-semibold">Important for families</p>
+                  <p className="mt-0.5 text-sm leading-relaxed">
+                    Bringing kids? Please include each child&apos;s meal choice in the notes below.
+                  </p>
+                </div>
+              </div>
               <Textarea
                 id="notes"
                 value={form.notes}
@@ -435,9 +444,6 @@ export function RsvpForm() {
                 rows={4}
                 disabled={isSubmitting}
               />
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                If you are bringing kids, please include their meal choices here.
-              </p>
             </Field>
             {submitError ? (
               <p className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">

@@ -13,7 +13,7 @@ export const wedding = {
     dateShort: "11 . 14 . 2026",
   city: "Savannah, Georgia",
   hashtag: "#MeetTheMorrisseys",
-  rsvpDeadline: "September 1, 2026",
+  rsvpDeadline: "October 14, 2026",
 }
 
 export type NavLink = { label: string; href: string }
@@ -274,7 +274,7 @@ export const faqs: Faq[] = [
   {
     question: "When should I RSVP by?",
     answer:
-      "Please respond no later than September 1, 2026. We kindly ask for your reply by this date so we may finalize arrangements with our venues.",
+      "Please respond no later than October 14, 2026. We kindly ask for your reply by this date so we may finalize arrangements with our venues.",
   },
   {
     question: "Can I change my RSVP after submitting?",
