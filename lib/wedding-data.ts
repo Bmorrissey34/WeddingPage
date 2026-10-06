@@ -81,7 +81,7 @@ export const schedule: ScheduleEvent[] = [
     id: "welcome",
     title: "Welcome Party",
     date: "Friday, November 13, 2026",
-    time: "5:30 PM - 10:00 PM",
+    time: "6:00 PM - 10:00 PM",
     location: "Churchill's",
     address: "13 W Bay St, Savannah, GA 31401",
     attire: "Business casual",
